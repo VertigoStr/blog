@@ -47,37 +47,20 @@
 	</header>
 
 	<main class="content-wrapper">
-		<article class="index-page">
-			<h4><a href="main.html">Privet</a></h4>
+		{% for p in publ %}
+			<article class="index-page">
+			<h4><a href="main.html">{{ p.title }}</a></h4>
       
-        {% if user.is_authenticated %}
-          <a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
-          <a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
-        {% endif %}
-			<p class="post-meta"><time datetime="20-07-2013">20-07-2013</time>&nbsp;/&nbsp;
-				<span item="author"><a href="main.html">Ivan</a></span>
+        	{% if user.is_authenticated and user == p.author %}
+          		<a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
+          		<a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
+        	{% endif %}
+			<p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
+				<span item="author"><a href="main.html">{{ p.author }}</a></span>
 			</p>
-			<p>First featurette heading. It'll blow your mind.
-        Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.Oh yeah, it's that good. See for yourself.</p>
-        </article>
-
-        <article class="index-page">
-			<h4><a href="main.html">Poka</a></h4>
-			<p class="post-meta"><time datetime="20-07-2013">20-07-2013</time>&nbsp;/&nbsp;
-				<span item="author"><a href="main.html">Ivan</a></span>
-			</p>
-			<p>First featurette heading. It'll blow your mind.
-        Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.Oh yeah, it's that good. See for yourself.</p>
-        </article>
-
-        <article class="index-page">
-			<h4><a href="main.html">Poka</a></h4>
-			<p class="post-meta"><time datetime="20-07-2013">20-07-2013</time>&nbsp;/&nbsp;
-				<span item="author"><a href="main.html">Ivan</a></span>
-			</p>
-			<p>First featurette heading. It'll blow your mind.
-        Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.Oh yeah, it's that good. See for yourself.</p>
-        </article>
+			<p>{{ p.abstract }}</p>
+        	</article>
+        {% endfor %}
 
         <div class="center-wrapper">
         	<a href="left"><span class="glyphicon glyphicon-arrow-left"></span></a>

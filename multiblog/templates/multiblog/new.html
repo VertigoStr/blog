@@ -1,0 +1,70 @@
+{% extends 'multiblog/base.html'%}
+
+{% block content %}
+    <div id="wrapper">
+        <div id="sidebar-wrapper">
+            <div class="col-sm-8 placeholder">
+            {% if user.is_authenticated %}
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-responsive">
+                <h4 class="text-center">{{ user }}</h4>
+                <form action="#" method="get">
+                  <input type="submit" class="btn" value="Новая запись" name="new">
+                  <input type="submit" class="btn" value="Выйти" name="logout">
+                </form>
+            {% else %}
+              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-responsive">
+                <form class="form-signin" method="POST" id="submit-form">{% csrf_token %}
+                    <h4 class="text-center">Кто ты?</h4>
+                        <div class="form-group">
+                            <div class="input-group col-md-12"> {{ form.email }} </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-12"> {{ form.password }} </div>
+                        </div>
+                        
+                        <div class="form-group">
+                        <div class="input-group col-md-12">
+                                <button class="btn btn-inverse btn-sm btn-block" type="submit" name="submit-log-in">Войти</button>
+                        </div>
+                    </div>  
+                  
+                    <div class="form-group">
+                      <div class="input-group col-md-12">
+                        <button class="btn btn-inverse btn-sm btn-block" type="submit" name="submit-register">Регистрация</button>
+                      </div>
+                    </div>  
+                </form>
+              {% endif %}              
+            </div>
+        </div>
+    </div>
+
+    <header class="main-header content-wrapper">
+        <nav class="nav-main center-wrapper">
+            <a class="nav-main" href="{% url 'main' %}">Black-Blog</a>
+        </nav>
+    </header>
+    <main class="content-wrapper">
+		<div class="row featurette">
+			<div class="modal-body row">
+                <form class="form-signin" method="POST" id="submit-form">{% csrf_token %}
+                    <div class="col-lg-12">
+                    <h2 class="text-left">Новая статья</h2><!--h2 class="text-center">Редактировать статью</h2-->
+                        <div class="form-group"> {{ form.title }} </div>
+
+                        <div class="form-group">{{ form.abstract }} </div>
+
+                        <div class="form-group">{{ form.full_text }} </div>
+
+                        <div class="form-group">
+                            <div class="input-group col-md-12">
+                                <button class="btn btn-inverse btn-lg btn-block" type="submit">Сохранить</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+{% endblock content %}

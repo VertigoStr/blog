@@ -65,3 +65,18 @@ class Blogger(AbstractBaseUser):
 			return self.name + " " + self.surname
 		else:
 			return self.email
+
+
+class Publication(models.Model):
+	title = models.CharField(max_length=200, verbose_name='Имя')
+	abstract = models.TextField(max_length=600, verbose_name='Краткое содержание')
+	full_text = models.TextField(verbose_name='Полное описание')
+	time = models.DateTimeField(verbose_name='Дата публикации')
+	author = models.ForeignKey('Blogger', on_delete=models.CASCADE, verbose_name='Автор')
+
+	def __str__(self):
+		return self.title
+
+	class Meta:
+		verbose_name = u'Публикация'
+		verbose_name_plural = u'Публикации'
