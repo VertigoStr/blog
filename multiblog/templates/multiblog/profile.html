@@ -112,80 +112,50 @@
 	<main class="content-wrapper">
 		<div class="row featurette">
 		  <div class="col-lg-4">
-        {% if user.image  %}
-          <img class="avatar" data-src="{{ user.image.url }}">
+        {% if blogger.avatar  %}
+          <img class="avatar" data-src="{{ blogger.avatar.url }}">
         {% else %}
           <img class="avatar" data-src="holder.js/500x500/auto">
         {% endif %}
       </div>
 		<div class="col-lg-4">
 			<div class="text-center">	
-			<h3 class="featurette-heading">{{ user }}
-        {% if user.is_authenticated %}
+			<h3 class="featurette-heading">{{ blogger }}
+        {% if user.is_authenticated and user == blogger%}
           <a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>
         {% endif %}
       </h3>
-          {% if user.phone %}
+          {% if blogger.phone %}
 			    <div class="col-lg-6"><h6>Телефон</h6></div>
-         	<div class="col-lg-6"><h6>{{ user.phone }}</h6></div>
+         	<div class="col-lg-6"><h6>{{ blogger.phone }}</h6></div>
           {% endif %}
-          {% if user.email and user.name %}
+          {% if blogger.email and blogger.name %}
          	<div class="col-lg-6"><h6>Email</h6></div>
-         	<div class="col-lg-6"><h6>{{ user.email }}</h6></div>
+         	<div class="col-lg-6"><h6>{{ blogger.email }}</h6></div>
           {% endif %}
-          {% if user.skype %}
+          {% if blogger.skype %}
          	<div class="col-lg-6"><h6>Skype</h6></div>
-         	<div class="col-lg-6"><h6>{{ user.skype }}</h6></div>
+         	<div class="col-lg-6"><h6>{{ blogger.skype }}</h6></div>
           {% endif %}
          	</div>
       </div>
     </div>
     
     <hr class="featurette-divider">
-
-
-    <article class="index-page">
-			<h4>
-				<a href="main.html">Privet</a>
-        {% if user.is_authenticated %}
-					<a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
-					<a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
-        {% endif %}
-			</h4>
-			<p class="post-meta"><time datetime="20-07-2013">20-07-2013</time>&nbsp;/&nbsp;
-				<span item="author"><a href="main.html">Ivan</a></span>
-			</p>
-			<p>First featurette heading. It'll blow your mind.
-        Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.Oh yeah, it's that good. See for yourself.</p>
-        </article>
-
-        <article class="index-page">
-			<h4>
-				<a href="main.html">Poka</a>
-					<a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
-					<a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
-			</h4>
-			<p class="post-meta"><time datetime="20-07-2013">20-07-2013</time>&nbsp;/&nbsp;
-				<span item="author"><a href="main.html">Ivan</a></span>
-			</p>
-			<p>First featurette heading. It'll blow your mind.
-        Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.Oh yeah, it's that good. See for yourself.</p>
-        </article>
-
-        <article class="index-page">
-			<h4>
-				<a href="main.html">Pr</a>
-					<a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
-					<a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
-			</h4>
-			<p class="post-meta"><time datetime="20-07-2013">20-07-2013</time>&nbsp;/&nbsp;
-				<span item="author"><a href="main.html">Ivan</a></span>
-			</p>
-			<p>First featurette heading. It'll blow your mind.
-        Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.Oh yeah, it's that good. See for yourself.</p>
-        </article>
-
-        <div class="center-wrapper">
+  {% for p in publ %}
+      <article class="index-page">
+      <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a></h4>
+      
+          {% if user.is_authenticated and user == p.author %}
+              <a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
+              <a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
+          {% endif %}
+      <p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
+        <span item="author"><a href="{% url 'my_profile' pk=p.author.id %}">{{ p.author }}</a></span>
+      </p>
+      <p>{{ p.abstract }}</p>
+          </article>
+        {% endfor %}<div class="center-wrapper">
         	<a href="left"><span class="glyphicon glyphicon-arrow-left"></span></a>
         	<span>1</span>
         	<a href="right"><span class="glyphicon glyphicon-arrow-right"></span></a>

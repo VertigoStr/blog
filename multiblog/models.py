@@ -21,11 +21,11 @@ class BloggerManager(BaseUserManager):
 
 class Blogger(AbstractBaseUser):
 	email = models.EmailField(verbose_name='Email', unique=True, max_length=250)
-	name = models.CharField(max_length=100, verbose_name='Имя')
-	surname = models.CharField(max_length=100, verbose_name='Фамилия')
-	phone = models.CharField(max_length=20, verbose_name='Телефон')
-	skype = models.CharField(max_length=20, verbose_name='Skype')
-	avatar = models.ImageField(upload_to=u'./media/img/', verbose_name='Аватар')
+	name = models.CharField(max_length=100, verbose_name='Имя', blank=False)
+	surname = models.CharField(max_length=100, verbose_name='Фамилия', blank=False)
+	phone = models.CharField(max_length=20, verbose_name='Телефон', blank=False)
+	skype = models.CharField(max_length=20, verbose_name='Skype', blank=False)
+	avatar = models.ImageField(upload_to=u'./media/img/', verbose_name='Аватар', blank=False)
 
 	is_active = models.BooleanField(default=True)
 	is_admin = models.BooleanField(default=False)
@@ -60,8 +60,12 @@ class Blogger(AbstractBaseUser):
 	img_avatar.short_description = 'Аватар'
 	img_avatar.allow_tags = True
 
+	class Meta:
+		verbose_name = u'Блоггер'
+		verbose_name_plural = u'Блоггеры'
+
 	def __str__(self):
-		if self.name and self.surname:
+		if self.name or self.surname:
 			return self.name + " " + self.surname
 		else:
 			return self.email

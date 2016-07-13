@@ -23,7 +23,7 @@ def main(request):
 		if new_user:
 			auth.login(request, new_user)	
 
-		return HttpResponseRedirect("/my_profile")		
+		return HttpResponseRedirect("/my_profile/" + str(auth.get_user(request).id))
 
 
 
@@ -31,8 +31,10 @@ def main(request):
 
 	return render(request, 'multiblog/main.html', {'form':form, 'user': auth.get_user(request), 'publ':publ})
 
-def my_profile(request):
-	return render(request, 'multiblog/profile.html', {'user': auth.get_user(request),})	
+def my_profile(request, pk):
+	blogger = Blogger.objects.get(id=pk)
+	publ = Publication.objects.all().order_by("id").filter(author=pk)
+	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ, 'user': auth.get_user(request),})	
 
 def new_publication(request):
 

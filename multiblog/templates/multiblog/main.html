@@ -47,24 +47,24 @@
 	</header>
 
 	<main class="content-wrapper">
-		{% for p in publ %}
-			<article class="index-page">
-			<h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a></h4>
-      
-        	{% if user.is_authenticated and user == p.author %}
-          		<a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
-          		<a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
-        	{% endif %}
-			<p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
-				<span item="author"><a href="main.html">{{ p.author }}</a></span>
-			</p>
-			<p>{{ p.abstract }}</p>
+		  {% for p in publ %}
+			    <article class="index-page">
+			      <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a></h4>
+              {% if user.is_authenticated and user == p.author %}
+          		  <a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
+          		  <a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
+        	    {% endif %}
+			      <p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
+				      <span item="author"><a href="{% url 'my_profile' pk=p.author.id %}">{{ p.author }}</a></span>
+			      </p>
+			
+            <p>{{ p.abstract }}</p>
         	</article>
-        {% endfor %}
+      {% endfor %}
 
-        <div class="center-wrapper">
-        	<a href="left"><span class="glyphicon glyphicon-arrow-left"></span></a>
-        	<span>12</span>
-        	<a href="right"><span class="glyphicon glyphicon-arrow-right"></span></a>
-        </div>
+      <div class="center-wrapper">
+        <a href="left"><span class="glyphicon glyphicon-arrow-left"></span></a>
+        <span>12</span>
+        <a href="right"><span class="glyphicon glyphicon-arrow-right"></span></a>
+      </div>
 {% endblock content %}
