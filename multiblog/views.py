@@ -4,9 +4,10 @@ from .models import Blogger, BloggerManager
 from django.contrib import auth
 
 def main(request):
+	form = UserAuthForm()
 	if request.GET.get('logout'):
 		auth.logout(request)
-		return HttpResponseRedirect('')
+		return HttpResponseRedirect("")
 
 	if request.method == "POST":
 		email = request.POST['email']
@@ -19,14 +20,12 @@ def main(request):
 		new_user = auth.authenticate(email=email, password=password)
 		
 		if new_user:
-			auth.login(request, new_user)								
-			
-		return HttpResponseRedirect('')
+			auth.login(request, new_user)	
 
-	else:			
-		form = UserAuthForm()
+		return HttpResponseRedirect("/my_profile")		
 
-	return render(request, 'multiblog/main.html', {'form':form, 'user': auth.get_user(request),})
+
+	return render(request, 'multiblog/main.html', {'form':form, 'user': auth.get_user(request)})
 
 def my_profile(request):
 	return render(request, 'multiblog/profile.html', {'user': auth.get_user(request),})	
