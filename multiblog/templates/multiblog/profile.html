@@ -111,35 +111,40 @@
 
 	<main class="content-wrapper">
 		<div class="row featurette">
-		<div class="col-lg-4">
-          		<img class="avatar" data-src="holder.js/500x500/auto">
-         </div>
+		  <div class="col-lg-4">
+        {% if user.image  %}
+          <img class="avatar" data-src="{{ user.image.url }}">
+        {% else %}
+          <img class="avatar" data-src="holder.js/500x500/auto">
+        {% endif %}
+      </div>
 		<div class="col-lg-4">
 			<div class="text-center">	
-			<h3 class="featurette-heading">Иван Петров
+			<h3 class="featurette-heading">{{ user }}
         {% if user.is_authenticated %}
           <a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>
         {% endif %}
       </h3>
-			<div class="col-lg-6"><h6>Телефон</h6>
+          {% if user.phone %}
+			    <div class="col-lg-6"><h6>Телефон</h6></div>
+         	<div class="col-lg-6"><h6>{{ user.phone }}</h6></div>
+          {% endif %}
+          {% if user.email and user.name %}
+         	<div class="col-lg-6"><h6>Email</h6></div>
+         	<div class="col-lg-6"><h6>{{ user.email }}</h6></div>
+          {% endif %}
+          {% if user.skype %}
+         	<div class="col-lg-6"><h6>Skype</h6></div>
+         	<div class="col-lg-6"><h6>{{ user.skype }}</h6></div>
+          {% endif %}
          	</div>
-         	<div class="col-lg-6"><h6>89101112134</h6>
-         	</div>
-         	<div class="col-lg-6"><h6>Email</h6>
-         	</div>
-         	<div class="col-lg-6"><h6>red@mail.ru</h6>
-         	</div>
-         	<div class="col-lg-6"><h6>Skype</h6>
-         	</div>
-         	<div class="col-lg-6"><h6>rrrrak</h6>
-         	</div>
-         	</div>
-         </div>
       </div>
-      <hr class="featurette-divider">
+    </div>
+    
+    <hr class="featurette-divider">
 
 
-      <article class="index-page">
+    <article class="index-page">
 			<h4>
 				<a href="main.html">Privet</a>
         {% if user.is_authenticated %}

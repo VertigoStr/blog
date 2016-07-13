@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
 from .forms import UserAuthForm, PublicationForm
 from .models import Blogger, BloggerManager, Publication
 from django.contrib import auth
@@ -52,4 +52,6 @@ def new_publication(request):
 
 	return render(request, 'multiblog/new.html', {'form':form, 'user': auth.get_user(request),})		
 
-
+def full_publication(request, pk):
+	post = get_object_or_404(Publication, pk=pk)
+	return render(request, 'multiblog/full.html', {'user': auth.get_user(request), 'post':post})

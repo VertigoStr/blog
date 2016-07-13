@@ -5,7 +5,7 @@
     	<div id="sidebar-wrapper">
     		<div class="col-sm-8 placeholder">
             {% if user.is_authenticated %}
-                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-responsive">
+                <img src="{{ el.image.url }}" class="img-responsive">
                 <h4 class="text-center">{{ user }}</h4>
                 <form action="#" method="get">
                   <input type="submit" class="btn" value="Новая запись" name="new">
@@ -49,7 +49,7 @@
 	<main class="content-wrapper">
 		{% for p in publ %}
 			<article class="index-page">
-			<h4><a href="main.html">{{ p.title }}</a></h4>
+			<h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a></h4>
       
         	{% if user.is_authenticated and user == p.author %}
           		<a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
