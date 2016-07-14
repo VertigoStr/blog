@@ -20,8 +20,9 @@
 			<p class="post-meta"><time datetime="{{ post.time }}">{{ post.time }}</time>&nbsp;/&nbsp;
 				<span item="author"><a href="{% url 'my_profile' pk=post.author.id %}">{{ post.author }}</a></span>
 			</p>
+            {% autoescape off %}
 			<div class="text-left">{{ post.full_text }}</div>	
-
+            {% endautoescape %}
 			<hr class="featurette-divider">            
         	
         	<h5 class="muted">{{ comments.count }} Комментариев</h5>        
@@ -36,7 +37,7 @@
       		    <div class="media">
   				    <a class="pull-left" href="#"><img class="media-object" src="{{ c.author.avatar.url }}" width="64" height="64"></a>
                     <div class="media-body">
-    				    <h4 class="media-heading">{{ c.author }}</h4>
+    				    <h4 class="media-heading"><a href="{% url 'my_profile' pk=c.author.id %}">{{ c.author }}</a></h4>
 					    <p>{{ c.text }}</p>
                         <p class="post-meta"><time datetime="{{ c.time }}">{{ c.time }}</time></p>
   				    </div>

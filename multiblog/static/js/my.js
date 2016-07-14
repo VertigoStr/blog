@@ -28,3 +28,23 @@ $('.delete-object').on('click', function(e){
 		});
 	});
 });
+
+$('.sort-page').on('click', function(e){
+	//name = list[0]['attributes'][1].value
+	//time = list[0]['attributes'][2].value 
+
+	var field = 1, sort_type = 'desc';
+	var list = $('.index-page').get();
+	console.log(list[0]['attributes'][2].value);
+	var new_list = new Array();
+
+	for (var i in list)
+		new_list.push({indx: i, val: list[i]['attributes'][field].value});
+
+	new_list.sort(function(a,b) {
+    	return sort_type == 'asc' ? a.val > b.val : a.val < b.val; 
+	});
+	
+	for (var i in list)
+		document.getElementById("main_page").insertBefore(list[new_list[i].indx], document.getElementById("navigation"));
+});

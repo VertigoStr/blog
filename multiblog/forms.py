@@ -9,7 +9,7 @@ class PublicationForm(forms.ModelForm):
 		widgets = {
 			'title' : forms.TextInput(attrs = {'class':'form-control', 'placeholder':'Название', 'required':True}),
 			'abstract': forms.Textarea(attrs={'class':'form-control',  'placeholder':'Краткое описание', 'rows':'6', 'required': True}),
-			'full_text': forms.Textarea(attrs={'class':'form-control',  'placeholder':'Текст статьи', 'rows':'12', 'required': True}),
+			'full_text': forms.Textarea(attrs={'class':'form-control',  'placeholder':'Текст статьи (Доступны html-тэги)', 'rows':'12', 'required': True}),
 		}
 
 class CommentsAddForm(forms.ModelForm):
