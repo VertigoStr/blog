@@ -59,10 +59,6 @@
 		  {% for p in publ %}
 			    <article class="index-page">
 			      <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a>
-              {% if user.is_authenticated and user == p.author %}
-          		  <a href="{% url 'edit' pk=p.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
-          		  <a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
-        	    {% endif %}
             </h4>
 			      <p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
 				      <span item="author"><a href="{% url 'my_profile' pk=p.author.id %}">{{ p.author }}</a></span>

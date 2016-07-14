@@ -5,7 +5,7 @@ from django.contrib import auth
 import datetime
 
 def main(request):
-	publ = Publication.objects.all().order_by("id")
+	publ = Publication.objects.all().order_by("-time")
 	if request.GET.get('new'):
 		return HttpResponseRedirect("/new/")
 
@@ -36,8 +36,14 @@ def main(request):
 	return render(request, 'multiblog/main.html', {'publ':publ})
 
 def my_profile(request, pk):
+
+	if request.method == "GET":
+		if request.GET.get("post_id"):
+			post_id = request.GET.get("post_id")
+			Publication.objects.filter(id=post_id).delete()
+
 	blogger = Blogger.objects.get(id=pk)
-	publ = Publication.objects.all().order_by("id").filter(author=pk)
+	publ = Publication.objects.all().order_by("-time").filter(author=pk)
 	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ})	
 
 def new_publication(request):

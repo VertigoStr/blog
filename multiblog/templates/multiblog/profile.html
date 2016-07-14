@@ -1,6 +1,24 @@
 {% extends 'multiblog/base.html'%}
 
 {% block content %}
+
+<div class="modal fade" id="confirm-delete">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Подтверждение удаления</div>
+            <div class="modal-body">
+                <p>Удалить данную запись?</p>
+                <p id="file-to-delete"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-danger btn-ok" id="confirm">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
   <div id="modal" class="modal fade">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -113,11 +131,14 @@
             </li>
         
         {% for p in publ %}
-            <article class="index-page">
+            <article class="index-page" id="{{ p.id }}">
                 <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a>
                 {% if user.is_authenticated and user == p.author %}
                     <a href="{% url 'edit' pk=p.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
-                    <a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
+                    <a href="#" role="button" data-toggle="modal" class="delete-object" data-target="#confirm-delete" 
+                        data-id="{{ p.id }}" data-title="{{ p.title }}">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
                 {% endif %}
                 </h4>
 
