@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
-from .forms import UserAuthForm, PublicationForm
-from .models import Blogger, BloggerManager, Publication
+from .forms import PublicationForm, CommentsAddForm
+from .models import Blogger, BloggerManager, Publication, Comments
 from django.contrib import auth
 import datetime
 
@@ -34,12 +34,12 @@ def main(request):
 
 	publ = Publication.objects.all().order_by("id")
 
-	return render(request, 'multiblog/main.html', {'user': auth.get_user(request), 'publ':publ})
+	return render(request, 'multiblog/main.html', {'publ':publ})
 
 def my_profile(request, pk):
 	blogger = Blogger.objects.get(id=pk)
 	publ = Publication.objects.all().order_by("id").filter(author=pk)
-	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ, 'user': auth.get_user(request),})	
+	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ})	
 
 def new_publication(request):
 
@@ -57,7 +57,7 @@ def new_publication(request):
 	else:
 		form = PublicationForm()
 
-	return render(request, 'multiblog/new.html', {'form':form, 'user': auth.get_user(request),})		
+	return render(request, 'multiblog/new.html', {'form':form, 'mode':False})		
 
 def edit_publication(request, pk):
 	post = get_object_or_404(Publication, pk=pk)
@@ -75,8 +75,23 @@ def edit_publication(request, pk):
 			return HttpResponseRedirect("/publication/" + str(pk))
 	else:
 		form = PublicationForm(instance=post)
-	return render(request, 'multiblog/new.html', {'form':form})
+	return render(request, 'multiblog/new.html', {'form':form, 'mode':True})
 
 def full_publication(request, pk):
 	post = get_object_or_404(Publication, pk=pk)
-	return render(request, 'multiblog/full.html', {'user': auth.get_user(request), 'post':post})
+	comments = Comments.objects.filter(publication=pk).order_by('-time')
+
+	if request.method == "POST":
+		form = CommentsAddForm(request.POST)
+		if form.is_valid():
+			comment = form.save(commit=False)
+			comment.text = form.cleaned_data['text']
+			comment.author = auth.get_user(request) 
+			comment.time = datetime.datetime.now()
+			comment.publication = post
+			comment.save()
+			return HttpResponseRedirect(request.path)
+	else:
+		form = CommentsAddForm()
+
+	return render(request, 'multiblog/full.html', {'post':post, 'comments':comments, 'form':form})

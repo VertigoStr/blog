@@ -24,19 +24,24 @@
 
 			<hr class="featurette-divider">            
         	
-        	<h5 class="muted">5 Комментариев</h5>        
-        		<div class="input-group input-group-lg">
-  					<span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
-	  					<input type="text" class="form-control" placeholder="Присоединиться к обсуждению">
-				</div>        
-
-      		<div class="media">
-  				<a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64"></a>
-  				<div class="media-body">
-    				<h4 class="media-heading">Иван Иванов</h4>
-					<p>Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo semper.</p>
-  				</div>
-			</div>
-
-		</div>
+        	<h5 class="muted">{{ comments.count }} Комментариев</h5>        
+                    {% if user.is_authenticated and user != post.author %}
+                        <form class="input-group input-group-lg" method="POST" >{% csrf_token %}
+  					        <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+                            {{ form.text }}
+                        </form>
+                    {% endif %}      
+          
+            {% for c in comments %}
+      		    <div class="media">
+  				    <a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64"></a>
+  				
+                    <div class="media-body">
+    				    <h4 class="media-heading">{{ c.author }}</h4>
+					    <p>{{ c.text }}</p>
+                        <p class="post-meta"><time datetime="{{ c.time }}">{{ c.time }}</time></p>
+  				    </div>
+			    </div>
+          {% endfor %}
+        </div>
 {% endblock content %}
