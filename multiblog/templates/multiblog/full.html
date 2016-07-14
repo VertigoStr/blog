@@ -1,70 +1,37 @@
 {% extends 'multiblog/base.html'%}
 
 {% block content %}
-    <div id="wrapper">
-      <div id="sidebar-wrapper">
-        <div class="col-sm-8 placeholder">
-            {% if user.is_authenticated %}
-                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-responsive">
-                <h4 class="text-center">{{ user }}</h4>
-                <form action="#" method="get">
-                  <input type="submit" class="btn" value="Новая запись" name="new">
-                  <input type="submit" class="btn" value="Выйти" name="logout">
-                </form>
-            {% else %}
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-responsive">
-                <form class="form-signin" method="POST" id="submit-form">{% csrf_token %}
-                  <h4 class="text-center">Кто ты?</h4>
-                    <div class="form-group">
-                        <div class="input-group col-md-12"> {{ form.email }} </div>
-                    </div>
+	{% if user.is_authenticated %}
+        <li class="sub-nav-main">
+            <ol><a href="{% url 'new' %}"><span class="glyphicon glyphicon-plus"></span></a></ol>
+            <ol><a href="{% url 'django.contrib.auth.views.logout' %}?next=/"><span class="glyphicon glyphicon-log-out"></span></a></ol>
+        </li>
+    {% endif %}
 
-                    <div class="form-group">
-                        <div class="input-group col-md-12"> {{ form.password }} </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <div class="input-group col-md-12">
-                          <button class="btn btn-inverse btn-sm btn-block" type="submit" name="submit-log-in">Войти</button>
-                        </div>
-                    </div>  
-                  
-                    <div class="form-group">
-                      <div class="input-group col-md-12">
-                        <button class="btn btn-inverse btn-sm btn-block" type="submit" name="submit-register">Регистрация</button>
-                      </div>
-                    </div>  
-                </form>
-              {% endif %}              
-            </div>
-        </div>
-  </div>
+    <header class="main-header sub-content-wrapper">
+        <nav class="nav-main center-wrapper">
+            <a class="nav-main" href="{% url 'main' %}">Black-Blog</a>
+        </nav>
+    </header>
 
-  <header class="main-header content-wrapper">
-    <nav class="nav-main center-wrapper">
-      <a class="nav-main" href="{% url 'main' %}">Black-Blog</a>
-    </nav>
-  </header>
-
-	<main class="content-wrapper">
+  	<main class="sub-content-wrapper">
 		<div class="row featurette">
 			<h2 class="text-left">{{ post.title }}</h2>
 			<p class="post-meta"><time datetime="{{ post.time }}">{{ post.time }}</time>&nbsp;/&nbsp;
-				<span item="author"><a href="main.html">{{ post.author }}</a></span>
+				<span item="author"><a href="{% url 'my_profile' pk=post.author.id %}">{{ post.author }}</a></span>
 			</p>
 			<div class="text-left">{{ post.full_text }}</div>	
 
-		<hr class="featurette-divider">            
-        <h5 class="muted">5 Комментариев</h5>        
-        	<div class="input-group input-group-lg">
-  				<span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
-	  				<input type="text" class="form-control" placeholder="Присоединиться к обсуждению">
-			</div>        
+			<hr class="featurette-divider">            
+        	
+        	<h5 class="muted">5 Комментариев</h5>        
+        		<div class="input-group input-group-lg">
+  					<span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+	  					<input type="text" class="form-control" placeholder="Присоединиться к обсуждению">
+				</div>        
 
-      <div class="media">
-  				<a class="pull-left" href="#">
-    				<img class="media-object" data-src="holder.js/64x64">
-  				</a>
+      		<div class="media">
+  				<a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64"></a>
   				<div class="media-body">
     				<h4 class="media-heading">Иван Иванов</h4>
 					<p>Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo semper.</p>
@@ -72,5 +39,4 @@
 			</div>
 
 		</div>
-
 {% endblock content %}

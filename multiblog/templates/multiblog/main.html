@@ -2,10 +2,10 @@
 
 {% block content %}
     <div id="wrapper">
-    	<div id="sidebar-wrapper">
-    		<div class="col-sm-8 placeholder">
+      <div id="sidebar-wrapper">
+        <div class="col-sm-8 placeholder">
             {% if user.is_authenticated %}
-                <img src="{{ el.image.url }}" class="img-responsive">
+                <img src="{{ user.avatar }}" class="img-responsive">
                 <h4 class="text-center">{{ user }}</h4>
                 <form action="#" method="get">
                   <input type="submit" class="btn" value="Новая запись" name="new">
@@ -14,18 +14,26 @@
             {% else %}
               <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" class="img-responsive">
                 <form class="form-signin" method="POST" id="submit-form">{% csrf_token %}
-              		<h4 class="text-center">Кто ты?</h4>
-                		<div class="form-group">
-                    		<div class="input-group col-md-12"> {{ form.email }} </div>
-              			</div>
-
-              			<div class="form-group">
-                    		<div class="input-group col-md-12"> {{ form.password }} </div>
-                		</div>
-              			
-              			<div class="form-group">
+                {% if error %}
+                  <h4 class="text-center text-danger">{{ error }}</h4>
+                {% else %}
+                  <h4 class="text-center">Кто ты?</h4>
+                {% endif %}
+                    <div class="form-group">
                         <div class="input-group col-md-12">
-                     		 	<button class="btn btn-inverse btn-sm btn-block" type="submit" name="submit-log-in">Войти</button>
+                          <input class="form-control" placeholder="Email" name="email">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group col-md-12"> 
+                          <input class="form-control" placeholder="Password" name="password">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="input-group col-md-12">
+                          <button class="btn btn-inverse btn-sm btn-block" type="submit" name="submit-log-in">Войти</button>
                         </div>
                     </div>  
                   
@@ -34,26 +42,28 @@
                         <button class="btn btn-inverse btn-sm btn-block" type="submit" name="submit-register">Регистрация</button>
                       </div>
                     </div>  
-              	</form>
+                </form>
               {% endif %}              
             </div>
         </div>
-	</div>
+  </div>
 
-	<header class="main-header content-wrapper">
-		<nav class="nav-main center-wrapper">
-			<a class="nav-main" href="{% url 'main' %}">Black-Blog</a>
-		</nav>
-	</header>
+  <header class="main-header content-wrapper">
+    <nav class="nav-main center-wrapper">
+      <a class="nav-main" href="{% url 'main' %}">Black-Blog</a>
+    </nav>
+  </header>
+
 
 	<main class="content-wrapper">
 		  {% for p in publ %}
 			    <article class="index-page">
-			      <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a></h4>
+			      <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a>
               {% if user.is_authenticated and user == p.author %}
-          		  <a href="edit"><span class="glyphicon glyphicon-pencil"></span></a>
+          		  <a href="{% url 'edit' pk=p.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
           		  <a href="revome"><span class="glyphicon glyphicon-remove"></span></a>
         	    {% endif %}
+            </h4>
 			      <p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
 				      <span item="author"><a href="{% url 'my_profile' pk=p.author.id %}">{{ p.author }}</a></span>
 			      </p>
