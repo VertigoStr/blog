@@ -25,17 +25,16 @@
 			<hr class="featurette-divider">            
         	
         	<h5 class="muted">{{ comments.count }} Комментариев</h5>        
-                    {% if user.is_authenticated and user != post.author %}
-                        <form class="input-group input-group-lg" method="POST" >{% csrf_token %}
-  					        <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
-                            {{ form.text }}
-                        </form>
-                    {% endif %}      
+                {% if user.is_authenticated and user != post.author %}
+                    <form class="input-group input-group-lg" method="POST" >{% csrf_token %}
+					        <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
+                        {{ form.text }}
+                    </form>
+                {% endif %}      
           
             {% for c in comments %}
       		    <div class="media">
-  				    <a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64"></a>
-  				
+  				    <a class="pull-left" href="#"><img class="media-object" src="{{ c.author.avatar.url }}" width="64" height="64"></a>
                     <div class="media-body">
     				    <h4 class="media-heading">{{ c.author }}</h4>
 					    <p>{{ c.text }}</p>

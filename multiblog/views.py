@@ -5,6 +5,7 @@ from django.contrib import auth
 import datetime
 
 def main(request):
+	publ = Publication.objects.all().order_by("id")
 	if request.GET.get('new'):
 		return HttpResponseRedirect("/new/")
 
@@ -18,11 +19,11 @@ def main(request):
 		password = request.POST['password']
 
 		if 'submit-register' in request.POST:
-			print('submit-register')
 			try:
 				new_user = Blogger.objects.create_user(email, password)
 			except Exception:
 				error = 'Данный Email-адрес уже используется'
+				return render(request, 'multiblog/main.html', {'publ':publ, 'error': error})
 
 		new_user = auth.authenticate(email=email, password=password)
 
@@ -30,9 +31,7 @@ def main(request):
 			auth.login(request, new_user)	
 			return HttpResponseRedirect("/my_profile/" + str(auth.get_user(request).id))
 		else:
-			return {'error': error}
-
-	publ = Publication.objects.all().order_by("id")
+			return render(request, 'multiblog/main.html', {'publ':publ, 'error': error})
 
 	return render(request, 'multiblog/main.html', {'publ':publ})
 

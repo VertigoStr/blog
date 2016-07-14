@@ -78,11 +78,7 @@
     <main class="sub-content-wrapper">
 		<div class="row featurette">
 		    <div class="col-lg-4">
-                {% if blogger.avatar  %}
-                    <img class="avatar" data-src="{{ blogger.avatar }}">
-                {% else %}
-                    <img class="avatar" data-src="holder.js/500x500/auto">
-                {% endif %}
+                <img class="avatar" src="{{ blogger.avatar.url }}">
             </div>
 		
             <div class="col-lg-4">
