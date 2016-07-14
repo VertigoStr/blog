@@ -126,9 +126,11 @@
         </div>
     
         <hr class="featurette-divider">
-            <li class="sort">
-                <ol><a href="new"><span class="glyphicon glyphicon-sort"></span></a></ol>
-            </li>
+
+        <li class="sort">
+            <ol><a href="#" class="sort-page-time-desc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по убыванию даты публикации" ><span class="glyphicon glyphicon-sort-by-order-alt"></span></a></ol>
+            <ol><a href="#" class="sort-page-time-asc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по возрастанию даты публикации"><span class="glyphicon glyphicon-sort-by-order"></span></a></ol>
+        </li>
         
         {% for p in publ %}
             <article class="index-page" id="{{ p.id }}">

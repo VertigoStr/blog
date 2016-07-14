@@ -1,3 +1,8 @@
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+
 $('document').ready(function(){
     $('#modal').modal({show: false});
 });
@@ -29,13 +34,9 @@ $('.delete-object').on('click', function(e){
 	});
 });
 
-$('.sort-page').on('click', function(e){
-	//name = list[0]['attributes'][1].value
-	//time = list[0]['attributes'][2].value 
-
-	var field = 1, sort_type = 'desc';
+var sort_page = function(f, st) {
+	var field = f, sort_type = st;
 	var list = $('.index-page').get();
-	console.log(list[0]['attributes'][2].value);
 	var new_list = new Array();
 
 	for (var i in list)
@@ -47,4 +48,19 @@ $('.sort-page').on('click', function(e){
 	
 	for (var i in list)
 		document.getElementById("main_page").insertBefore(list[new_list[i].indx], document.getElementById("navigation"));
+}
+
+$('.sort-page-time-desc').on('click', function(e){
+	sort_page(2,'desc');
+});
+
+$('.sort-page-time-asc').on('click', function(e){
+	sort_page(2,'asc');
+});
+$('.sort-page-name-desc').on('click', function(e){
+	sort_page(1,'desc');
+});
+
+$('.sort-page-name-asc').on('click', function(e){
+	sort_page(1,'asc');
 });
