@@ -5,15 +5,12 @@ $(document).ready(function(){
 
 $('document').ready(function(){
     $('#modal').modal({show: false});
+
 	var name = $('#get-names').attr('data-name'), 
 		surname = $('#get-names').attr('data-surname'),
 		phone = $('#get-phone').attr('data-phone'),
 		skype = $('#get-skype').attr('data-skype');
 
-	if ($('#get-names').attr('data-se')) { 
-		console.log($('#get-names').attr('data-se'))
-	}
-	console.log((name + " " + surname).length);
 	var add_email = (name + surname).length == 0;
 	$('#input-name').html('<input class="form-control" type="text" id="name" value='+ name +'>');
 	$('#input-surname').html('<input class="form-control" type="text" id="surname" value='+ surname +'>');
@@ -24,9 +21,11 @@ $('document').ready(function(){
 		$('#input-skype').html('<input class="form-control" type="text" id="skype" value='+ skype +'>');
 	
     $('#submit-edit').on('click', function(e){
+
     	var csrftoken = getCookie('csrftoken');
 		e.preventDefault();
-    	var params = {'name': $('#name').val(), 'surname': $('#surname').val(), 'phone' : $('#phone').val(), 'skype' : $('#skype').val()}
+
+    	var params = {'name': $('#name').val(), 'surname': $('#surname').val(), 'phone' : $('#phone').val(), 'skype' : $('#skype').val() }
     	$.ajax({
 			url: window.location.pathname,
 			type: "POST",
@@ -34,7 +33,8 @@ $('document').ready(function(){
 					"new_name" : params['name'], 
 					"new_surname" : params['surname'],
 					"new_phone" : params['phone'],
-					"new_skype" : params['skype']
+					"new_skype" : params['skype'],
+					'new_avatar' : params['avatar']
 				},
 
 			beforeSend: function(xhr, settings) {
@@ -55,7 +55,6 @@ $('document').ready(function(){
 							 + '<a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>'
 							 );
 
-					console.log(full_name.length);
 					$('.index-page').attr('data-author',
 						 full_name.length != 1 ? full_name : email);
 					$('.author-title').html(full_name.length == 1 ? email : full_name);

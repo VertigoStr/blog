@@ -49,8 +49,7 @@ def my_profile(request, pk):
 		new_surname = request.POST.get('new_surname')
 		new_phone = request.POST.get('new_phone')
 		new_skype = request.POST.get('new_skype')
-		
-		print(new_name + new_surname + new_phone + new_skype)
+
 
 		blg = Blogger.objects.get(id=pk)
 		if new_name:
@@ -64,7 +63,7 @@ def my_profile(request, pk):
 
 		if new_skype:
 			blg.skype = new_skype
-			
+
 		blg.save()
 
 	blogger = Blogger.objects.get(id=pk)
