@@ -50,17 +50,8 @@ var sort_page = function(f, st) {
 		document.getElementById("main_page").insertBefore(list[new_list[i].indx], document.getElementById("navigation"));
 }
 
-$('.sort-page-time-desc').on('click', function(e){
-	sort_page(2,'desc');
-});
-
-$('.sort-page-time-asc').on('click', function(e){
-	sort_page(2,'asc');
-});
-$('.sort-page-name-desc').on('click', function(e){
-	sort_page(1,'desc');
-});
-
-$('.sort-page-name-asc').on('click', function(e){
-	sort_page(1,'asc');
+$('.sort-page').on('click', function(e){
+	$('[data-toggle="tooltip"]').tooltip('hide');
+	var args = $(this).attr('act').split('-')
+	sort_page(args[0], args[1]);
 });

@@ -93,7 +93,7 @@
         </nav>
     </header>
 
-    <main class="sub-content-wrapper">
+    <main class="sub-content-wrapper" id="main_page">
 		<div class="row featurette">
 		    <div class="col-lg-4">
                 <img class="avatar" src="{{ blogger.avatar.url }}">
@@ -128,12 +128,12 @@
         <hr class="featurette-divider">
 
         <li class="sort">
-            <ol><a href="#" class="sort-page-time-desc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по убыванию даты публикации" ><span class="glyphicon glyphicon-sort-by-order-alt"></span></a></ol>
-            <ol><a href="#" class="sort-page-time-asc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по возрастанию даты публикации"><span class="glyphicon glyphicon-sort-by-order"></span></a></ol>
+            <ol><a href="#" class="sort-page" act="2-desc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по убыванию даты публикации" ><span class="glyphicon glyphicon-sort-by-order-alt"></span></a></ol>
+            <ol><a href="#" class="sort-page" act="2-asc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по возрастанию даты публикации"><span class="glyphicon glyphicon-sort-by-order"></span></a></ol>
         </li>
         
         {% for p in publ %}
-            <article class="index-page" id="{{ p.id }}">
+            <article class="index-page" data-author="{{ p.author }}" data-time="{{ p.time }}" id="{{ p.id }}">
                 <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a>
                 {% if user.is_authenticated and user == p.author %}
                     <a href="{% url 'edit' pk=p.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
@@ -152,7 +152,7 @@
           </article>
         {% endfor %}
 
-        <div class="center-wrapper">
+        <div class="center-wrapper" id="navigation">
         	<a href="left"><span class="glyphicon glyphicon-arrow-left"></span></a>
             	<span>1</span>
         	<a href="right"><span class="glyphicon glyphicon-arrow-right"></span></a>
