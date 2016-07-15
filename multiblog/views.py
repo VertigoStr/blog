@@ -53,10 +53,18 @@ def my_profile(request, pk):
 		print(new_name + new_surname + new_phone + new_skype)
 
 		blg = Blogger.objects.get(id=pk)
-		blg.name = new_name
-		blg.surname = new_surname
-		blg.phone = new_phone
-		blg.skype = new_skype
+		if new_name:
+			blg.name = new_name
+
+		if new_surname:
+			blg.surname = new_surname
+
+		if new_phone:
+			blg.phone = new_phone
+
+		if new_skype:
+			blg.skype = new_skype
+			
 		blg.save()
 
 	blogger = Blogger.objects.get(id=pk)

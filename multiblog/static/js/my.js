@@ -10,10 +10,18 @@ $('document').ready(function(){
 		phone = $('#get-phone').attr('data-phone'),
 		skype = $('#get-skype').attr('data-skype');
 
+	if ($('#get-names').attr('data-se')) { 
+		console.log($('#get-names').attr('data-se'))
+	}
+	console.log((name + " " + surname).length);
+	var add_email = (name + surname).length == 0;
 	$('#input-name').html('<input class="form-control" type="text" id="name" value='+ name +'>');
 	$('#input-surname').html('<input class="form-control" type="text" id="surname" value='+ surname +'>');
-	$('#input-phone').html('<input class="form-control" type="text" id="phone" value='+ phone +'>');
-	$('#input-skype').html('<input class="form-control" type="text" id="skype" value='+ skype +'>');
+	if (phone)
+		$('#input-phone').html('<input class="form-control" type="text" id="phone" value='+ phone +'>');
+
+	if (skype)
+		$('#input-skype').html('<input class="form-control" type="text" id="skype" value='+ skype +'>');
 	
     $('#submit-edit').on('click', function(e){
     	var csrftoken = getCookie('csrftoken');
@@ -39,17 +47,30 @@ $('document').ready(function(){
 				if(!json.error) {
 					$('#modal').modal('hide');
 					var full_name = params['name'] + " " + params['surname'],
-						email = $('#get-email').attr('data-email');
+						email = $('#get-names').attr('data-email');
 
 					$('#get-names').attr('data-name', params['name']);
 					$('#get-names').attr('data-surname', params['surname']);
-					$('#get-names').html(full_name
+					$('#get-names').html((full_name.length != 1 ? full_name : email)
 							 + '<a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>'
 							 );
 
+					console.log(full_name.length);
 					$('.index-page').attr('data-author',
-						 full_name.length == 0 ? email : full_name);
-					$('.author-title').html(full_name.length == 0 ? email : full_name);
+						 full_name.length != 1 ? full_name : email);
+					$('.author-title').html(full_name.length == 1 ? email : full_name);
+
+
+					if (add_email) {
+						if (!$('#get-phone').attr('data-phone'))
+							$('.contact-info').prepend('<div class="col-lg-6"><h6>Телефон</h6></div><div class="col-lg-6" id="get-phone" data-phone="' + params['phone'] + '"><h6>' + params['phone'] + '</h6></div>');
+
+						if (!$('#get-email').attr('data-email') && full_name.length != 1)
+							$('.contact-info').prepend('<div class="col-lg-6"><h6>Email</h6></div><div class="col-lg-6" id="get-email" data-email="' + params['email'] + '"><h6>' + email + '</h6></div>');
+
+						if (!$('#get-skype').attr('data-skype'))
+							$('.contact-info').prepend('<div class="col-lg-6"><h6>Skype</h6></div><div class="col-lg-6" id="get-skype" data-skype="' + params['skype'] + '"><h6>' + params['skype'] + '</h6></div>');
+					}
 
 					$('#get-phone').attr('data-phone', params['phone']);
 					$('#get-phone').html('<h6>' + params['phone'] + '</h6>');
