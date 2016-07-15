@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, HttpResponse
-from .forms import PublicationForm, CommentsAddForm
+from .forms import PublicationForm, CommentsAddForm, BloggerEditForm
 from .models import Blogger, BloggerManager, Publication, Comments
 from django.contrib import auth
 import datetime
@@ -38,14 +38,30 @@ def main(request):
 
 def my_profile(request, pk):
 
+	form = BloggerEditForm()
 	if request.method == "GET":
 		if request.GET.get("post_id"):
 			post_id = request.GET.get("post_id")
 			Publication.objects.filter(id=post_id).delete()
 
+	if request.method == "POST":
+		new_name = request.POST.get('new_name')
+		new_surname = request.POST.get('new_surname')
+		new_phone = request.POST.get('new_phone')
+		new_skype = request.POST.get('new_skype')
+		
+		print(new_name + new_surname + new_phone + new_skype)
+
+		blg = Blogger.objects.get(id=pk)
+		blg.name = new_name
+		blg.surname = new_surname
+		blg.phone = new_phone
+		blg.skype = new_skype
+		blg.save()
+
 	blogger = Blogger.objects.get(id=pk)
 	publ = Publication.objects.all().order_by("-time").filter(author=pk)
-	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ})	
+	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ, 'form':form})	
 
 def new_publication(request):
 

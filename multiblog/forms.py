@@ -20,3 +20,16 @@ class CommentsAddForm(forms.ModelForm):
 		widgets = {
 			'text' : forms.TextInput(attrs={'id':'comment','class':'form-control', 'placeholder':'Присоединиться к обсуждению'})
 		}
+
+
+class BloggerEditForm(forms.ModelForm):
+
+	class Meta:
+		model = Blogger
+		fields = ('name', 'surname', 'phone', 'skype',)
+		widgets = {
+			'name' : forms.TextInput(attrs={'class':'form-control', 'id':'name'}),
+			'surname' : forms.TextInput(attrs={'class':'form-control', 'id':'surname'}),
+			'phone' : forms.TextInput(attrs={'class':'form-control', 'id':'phone'}),
+			'skype' : forms.TextInput(attrs={'class':'form-control', 'id':'skype'}),
+		}

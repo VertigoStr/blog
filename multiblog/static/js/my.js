@@ -5,6 +5,66 @@ $(document).ready(function(){
 
 $('document').ready(function(){
     $('#modal').modal({show: false});
+	var name = $('#get-names').attr('data-name'), 
+		surname = $('#get-names').attr('data-surname'),
+		phone = $('#get-phone').attr('data-phone'),
+		skype = $('#get-skype').attr('data-skype');
+
+	$('#input-name').html('<input class="form-control" type="text" id="name" value='+ name +'>');
+	$('#input-surname').html('<input class="form-control" type="text" id="surname" value='+ surname +'>');
+	$('#input-phone').html('<input class="form-control" type="text" id="phone" value='+ phone +'>');
+	$('#input-skype').html('<input class="form-control" type="text" id="skype" value='+ skype +'>');
+	
+    $('#submit-edit').on('click', function(e){
+    	var csrftoken = getCookie('csrftoken');
+		e.preventDefault();
+    	var params = {'name': $('#name').val(), 'surname': $('#surname').val(), 'phone' : $('#phone').val(), 'skype' : $('#skype').val()}
+    	$.ajax({
+			url: window.location.pathname,
+			type: "POST",
+			data : {
+					"new_name" : params['name'], 
+					"new_surname" : params['surname'],
+					"new_phone" : params['phone'],
+					"new_skype" : params['skype']
+				},
+
+			beforeSend: function(xhr, settings) {
+        		if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            		xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        		}
+    		},
+
+			success: function(json){
+				if(!json.error) {
+					$('#modal').modal('hide');
+					var full_name = params['name'] + " " + params['surname'],
+						email = $('#get-email').attr('data-email');
+
+					$('#get-names').attr('data-name', params['name']);
+					$('#get-names').attr('data-surname', params['surname']);
+					$('#get-names').html(full_name
+							 + '<a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>'
+							 );
+
+					$('.index-page').attr('data-author',
+						 full_name.length == 0 ? email : full_name);
+					$('.author-title').html(full_name.length == 0 ? email : full_name);
+
+					$('#get-phone').attr('data-phone', params['phone']);
+					$('#get-phone').html('<h6>' + params['phone'] + '</h6>');
+
+					$('#get-skype').attr('data-skype', params['skype']);
+					$('#get-skype').html('<h6>' + params['skype'] + '</h6>');
+				}
+			},
+
+			error: function(xhr, errmsg, err) {
+				alert("Something went wrong!");
+				//alert(xhr.status + ": " + xhr.responseText);
+			}
+		});
+    });
 });
 
 
