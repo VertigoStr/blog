@@ -16,7 +16,7 @@ class CommentsAddForm(forms.ModelForm):
 
 	class Meta:
 		model = Comments
-		fields = ('text', )
+		fields = ['text']
 		widgets = {
-			'text' : forms.TextInput(attrs={'class':'form-control', 'placeholder':'Присоединиться к обсуждению'})
+			'text' : forms.TextInput(attrs={'id':'comment','class':'form-control', 'placeholder':'Присоединиться к обсуждению'})
 		}

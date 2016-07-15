@@ -27,21 +27,23 @@
         	
         	<h5 class="muted">{{ comments.count }} Комментариев</h5>        
                 {% if user.is_authenticated and user != post.author %}
-                    <form class="input-group input-group-lg" method="POST" >{% csrf_token %}
+                    <form action="/create_comment/" class="input-group input-group-lg" method="POST" id="comment-form">{% csrf_token %}
 					        <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>
                         {{ form.text }}
                     </form>
                 {% endif %}      
-          
+            
+            <span class="row" id="comments">
             {% for c in comments %}
       		    <div class="media">
   				    <a class="pull-left" href="#"><img class="media-object" src="{{ c.author.avatar.url }}" width="64" height="64"></a>
                     <div class="media-body">
     				    <h4 class="media-heading"><a href="{% url 'my_profile' pk=c.author.id %}">{{ c.author }}</a></h4>
 					    <p>{{ c.text }}</p>
-                        <p class="post-meta"><time datetime="{{ c.time }}">{{ c.time }}</time></p>
+                        <p class="post-meta"><time datetime='{{ c.time|date:"SHORT_DATETIME_FORMAT" }}'>{{ c.time|date:"SHORT_DATETIME_FORMAT" }}</time></p>
   				    </div>
 			    </div>
-          {% endfor %}
+            {% endfor %}
+            </span>
         </div>
 {% endblock content %}

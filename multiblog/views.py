@@ -1,8 +1,9 @@
-from django.shortcuts import render, HttpResponseRedirect, get_object_or_404
+from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, HttpResponse
 from .forms import PublicationForm, CommentsAddForm
 from .models import Blogger, BloggerManager, Publication, Comments
 from django.contrib import auth
 import datetime
+import json
 
 def main(request):
 	publ = Publication.objects.all().order_by("-time")
@@ -83,20 +84,25 @@ def edit_publication(request, pk):
 	return render(request, 'multiblog/new.html', {'form':form, 'mode':True})
 
 def full_publication(request, pk):
+	form = CommentsAddForm()
 	post = get_object_or_404(Publication, pk=pk)
 	comments = Comments.objects.filter(publication=pk).order_by('-time')
 
 	if request.method == "POST":
-		form = CommentsAddForm(request.POST)
-		if form.is_valid():
-			comment = form.save(commit=False)
-			comment.text = form.cleaned_data['text']
-			comment.author = auth.get_user(request) 
-			comment.time = datetime.datetime.now()
-			comment.publication = post
+		comment_text = request.POST.get('comment')
+		response_data = {}
+		if comment_text:
+			comment = Comments(text=comment_text, author=auth.get_user(request), time=datetime.datetime.now(), publication=post)
 			comment.save()
-			return HttpResponseRedirect(request.path)
-	else:
-		form = CommentsAddForm()
+
+			response_data['result'] = 'success'
+			response_data['txt'] = comment.text
+			response_data['author'] = comment.author.get_full_name()
+			response_data['avatar'] = comment.author.avatar.url
+			response_data['author_id'] = comment.author.id
+			response_data['when'] = comment.time.strftime('%d.%m.%Y %H:%M')
+
+			return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 
 	return render(request, 'multiblog/full.html', {'post':post, 'comments':comments, 'form':form})

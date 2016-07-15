@@ -55,3 +55,64 @@ $('.sort-page').on('click', function(e){
 	var args = $(this).attr('act').split('-')
 	sort_page(args[0], args[1]);
 });
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+function create_comment() {
+	var csrftoken = getCookie('csrftoken');
+	$.ajax({
+		url: window.location.pathname,
+		type: "POST",
+		data: {'comment': $('#comment').val()},
+
+		beforeSend: function(xhr, settings) {
+        	if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            	xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        	}
+    	},
+
+		success: function(json) {
+			if(!json.error) {
+				$('#comment').val('');
+				$('#comments').prepend('<div class="media"><a class="pull-left" href="#"><img class="media-object" src="'
+				 + json.avatar + '" width="64" height="64"></a><div class="media-body"><h4 class="media-heading"><a href="/my_profile/'
+				 + json.author_id +'">'
+				 + json.author + '</a></h4><p>' 
+				 + json.txt + '</p><p class="post-meta"><time datetime="' 
+				 + json.when + '">' 
+				 + json.when + '</time></p></div></div>'
+				);
+				
+			}
+		},
+
+		error: function(xhr, errmsg, err) {
+			alert(xhr.status + ": " + xhr.responseText);
+		}
+
+	});
+};
+
+
+$('#comment-form').on('submit', function(e) {
+	e.preventDefault();
+	create_comment()
+});

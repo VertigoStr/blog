@@ -35,7 +35,10 @@ class Blogger(AbstractBaseUser):
 	USERNAME_FIELD = 'email'
 
 	def get_full_name(self):
-		return self.email
+		if self.name or self.surname:
+			return self.name + " " + self.surname
+		else:
+			return self.email
 
 	def get_short_name(self):
 		return self.email
