@@ -26,10 +26,13 @@ class BloggerEditForm(forms.ModelForm):
 
 	class Meta:
 		model = Blogger
-		fields = ('name', 'surname', 'phone', 'skype',)
+		fields = ('name', 'surname', 'phone', 'skype', )
 		widgets = {
 			'name' : forms.TextInput(attrs={'class':'form-control', 'id':'name'}),
 			'surname' : forms.TextInput(attrs={'class':'form-control', 'id':'surname'}),
 			'phone' : forms.TextInput(attrs={'class':'form-control', 'id':'phone'}),
 			'skype' : forms.TextInput(attrs={'class':'form-control', 'id':'skype'}),
 		}
+
+class BloggerAvatarLoadForm(forms.Form):
+	avatar = forms.FileField()

@@ -61,21 +61,23 @@
   </li>
 
 	<main class="content-wrapper" id="main_page">
+      <div id="posts">
 		  {% for p in publ %}
 			    <article class="index-page" data-author="{{ p.author }}" data-time="{{ p.time }}">
 			      <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a>
             </h4>
-			      <p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
+			      <p class="post-meta"><time datetime='{{ p.time|date:"SHORT_DATETIME_FORMAT" }}'>{{ p.time|date:"SHORT_DATETIME_FORMAT" }}</time>&nbsp;/&nbsp;
 				      <span item="author"><a href="{% url 'my_profile' pk=p.author.id %}">{{ p.author }}</a></span>
 			      </p>
 			
             <p>{{ p.abstract }}</p>
         	</article>
       {% endfor %}
+      </div>
 
       <div class="center-wrapper" id="navigation">
-        <a href="left"><span class="glyphicon glyphicon-arrow-left"></span></a>
-        <span>1</span>
-        <a href="right"><span class="glyphicon glyphicon-arrow-right"></span></a>
+        <a id="left" href=""><span class="glyphicon glyphicon-arrow-left"></span></a>
+        <span id="page-number">1</span>
+        <a id="right" href=""><span class="glyphicon glyphicon-arrow-right"></span></a>
       </div>
 {% endblock content %}

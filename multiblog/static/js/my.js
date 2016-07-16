@@ -3,6 +3,38 @@ $(document).ready(function(){
 });
 
 
+$('#upload-btn').on('click', function(e) {
+    /*$('#upload-new-avatar').on('click', function(e) {
+		e.preventDefault();
+    	var data = new FormData($('form-upload').get(0));
+    	$.ajax({
+    		url: window.location.pathname,
+    		type: 'POST',
+    		data: data,
+    		cache: false,
+    		processData: false,
+    		contentType: false,
+    		beforeSend: function(xhr, settings) {
+    			var csrftoken = getCookie('csrftoken');
+        		if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            		xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        		}
+    		},
+    		success: function(json) {
+    			if (!json.error) {
+    				$('.avatar').attr('src', json.url)
+    				$('#new-avatar').modal('hide');
+    			} 
+    		},
+    		error: function(xhr, errmsg, err) {
+				//alert("Something went wrong!");
+				alert(xhr.status + ": " + xhr.responseText);
+			}
+		});
+    });*/
+});
+
+
 $('document').ready(function(){
     $('#modal').modal({show: false});
 
@@ -25,16 +57,17 @@ $('document').ready(function(){
     	var csrftoken = getCookie('csrftoken');
 		e.preventDefault();
 
-    	var params = {'name': $('#name').val(), 'surname': $('#surname').val(), 'phone' : $('#phone').val(), 'skype' : $('#skype').val() }
+    	var params = {'name': $('#name').val(), 'surname': $('#surname').val(), 'phone' : $('#phone').val(), 'skype' : $('#skype').val()}
+    	console.log(params);
     	$.ajax({
 			url: window.location.pathname,
 			type: "POST",
 			data : {
+					"edit" : "edit",
 					"new_name" : params['name'], 
 					"new_surname" : params['surname'],
 					"new_phone" : params['phone'],
 					"new_skype" : params['skype'],
-					'new_avatar' : params['avatar']
 				},
 
 			beforeSend: function(xhr, settings) {
@@ -76,12 +109,13 @@ $('document').ready(function(){
 
 					$('#get-skype').attr('data-skype', params['skype']);
 					$('#get-skype').html('<h6>' + params['skype'] + '</h6>');
+
 				}
 			},
 
 			error: function(xhr, errmsg, err) {
-				alert("Something went wrong!");
-				//alert(xhr.status + ": " + xhr.responseText);
+				//alert("Something went wrong!");
+				alert(xhr.status + ": " + xhr.responseText);
 			}
 		});
     });
@@ -93,7 +127,7 @@ $('.delete-object').on('click', function(e){
 	$('#file-to-delete').html('<strong>' + $(this).attr('data-title') + '</strong>');
 
 	$('#confirm').on('click', function(e){
-		// console.log(post_id);		
+		console.log(post_id);		
 		$.ajax({
 			url: window.location.pathname,
 			type: "GET",
@@ -127,7 +161,7 @@ var sort_page = function(f, st) {
 	});
 	
 	for (var i in list)
-		document.getElementById("main_page").insertBefore(list[new_list[i].indx], document.getElementById("navigation"));
+		document.getElementById("posts").appendChild(list[new_list[i].indx]);
 }
 
 $('.sort-page').on('click', function(e){
@@ -180,7 +214,11 @@ function create_comment() {
 				 + json.when + '">' 
 				 + json.when + '</time></p></div></div>'
 				);
-				
+
+				var count = parseInt($('.muted').attr('value'));
+				count++;
+				$('.muted').attr('value', count);
+				$('.muted').html(count + " Комментариев");				
 			}
 		},
 
@@ -195,4 +233,51 @@ function create_comment() {
 $('#comment-form').on('submit', function(e) {
 	e.preventDefault();
 	create_comment()
+});
+
+
+function paginator(page) {
+	$.ajax({
+		url: window.location.pathname,
+		type: "GET",
+		data: {'page': page},
+
+		success : function(json) {
+			if (!json.error) {
+				$('#posts').empty();
+				for (var i = 1; i < json.length; i++) {
+					$('#posts').prepend('<article class="index-page" data-author="' 
+						+ json[i].author + '" data-time="'
+						+ json[i].when + '"><h4><a href="/publication/'
+						+ json[i].post_id + '">' 
+						+ json[i].post_title + '</a></h4><p class="post-meta"><time datetime="' 
+						+ json[i].when + '">' 
+						+ json[i].when + '</time>&nbsp;/&nbsp;<span item="author"><a href="/my_profile/' 
+						+ json[i].author_id + '">' 
+						+ json[i].author + '</a></span></p><p>' 
+						+ json[i].txt + '</p></article>');
+				}
+				$('#page-number').html(page == json[0].pages + 1 ? page - 1: page);
+			}
+		}, 
+
+		error: function(xhr, errmsg, err) {
+			console.log(xhr.status + ": " + xhr.responseText);			
+		}
+
+	});
+}
+
+
+$('#right').on('click', function(e) {
+	e.preventDefault();
+	var page = parseInt($('#page-number').text());
+	page = page + 1;
+	paginator(page);
+});
+
+$('#left').on('click', function(e) {
+	e.preventDefault();
+	var page = parseInt($('#page-number').text());
+	paginator(page <= 1 ? page : page - 1);
 });

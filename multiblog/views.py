@@ -1,12 +1,48 @@
 from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, HttpResponse
-from .forms import PublicationForm, CommentsAddForm, BloggerEditForm
+from .forms import PublicationForm, CommentsAddForm, BloggerEditForm, BloggerAvatarLoadForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Blogger, BloggerManager, Publication, Comments
 from django.contrib import auth
 import datetime
 import json
 
+
+page_limit = 1 # ограничение на количество статей на странице
+
+def pagination(response_data, paginator, page):
+
+	try:
+		pbl = paginator.page(page)
+	except PageNotAnInteger:
+		pbl = paginator.page(1)
+	except EmptyPage:
+		pbl = paginator.page(paginator.num_pages)
+
+	for p in pbl:
+		response_data.append({
+			'result' : 'success',
+			 'txt' : p.abstract, 
+			 'post_title': p.title, 
+			 'author' : p.author.get_full_name(),
+			 'author_id' : p.author.id,
+			 'post_id' : p.id,
+			 'when' : p.time.strftime('%d.%m.%Y %H:%M')
+		})
+	return response_data
+	
+
 def main(request):
 	publ = Publication.objects.all().order_by("-time")
+	paginator = Paginator(publ, page_limit)
+
+	if request.GET.get("page"):
+		response_data = []
+		response_data.append({"pages" : paginator.num_pages})
+		page = int(request.GET.get("page"))
+		response_data = pagination(response_data, paginator, page)
+		return HttpResponse(json.dumps(response_data), content_type="application/json")	
+
+
 	if request.GET.get('new'):
 		return HttpResponseRedirect("/new/")
 
@@ -34,41 +70,52 @@ def main(request):
 		else:
 			return render(request, 'multiblog/main.html', {'publ':publ, 'error': error})
 
-	return render(request, 'multiblog/main.html', {'publ':publ})
+
+
+	return render(request, 'multiblog/main.html', {'publ':paginator.page(1)})
 
 def my_profile(request, pk):
-
 	form = BloggerEditForm()
-	if request.method == "GET":
-		if request.GET.get("post_id"):
-			post_id = request.GET.get("post_id")
-			Publication.objects.filter(id=post_id).delete()
+	if request.GET.get("post_id"):
+		post_id = request.GET.get("post_id")
+		Publication.objects.filter(id=post_id).delete()
 
-	if request.method == "POST":
+	if request.POST:
+		load_form = BloggerAvatarLoadForm(request.POST, request.FILES)
+		if load_form.is_valid():
+			blg = Blogger.objects.get(id=pk)
+			ifile = request.FILES['avatar']
+			blg.avatar.save(ifile.name, ifile)
+			blg.save()
+			#return HttpResponse(json.dumps({'url' : blg.avatar.url}), content_type="application/json")
+
+	if request.POST.get('edit'):
 		new_name = request.POST.get('new_name')
 		new_surname = request.POST.get('new_surname')
 		new_phone = request.POST.get('new_phone')
 		new_skype = request.POST.get('new_skype')
 
-
-		blg = Blogger.objects.get(id=pk)
-		if new_name:
-			blg.name = new_name
+		blоg = Blogger.objects.get(id=pk)
+		blоg.name = new_name if new_name else None
 
 		if new_surname:
-			blg.surname = new_surname
+			blоg.surname = new_surname
 
 		if new_phone:
-			blg.phone = new_phone
+			blоg.phone = new_phone
 
 		if new_skype:
-			blg.skype = new_skype
+			blоg.skype = new_skype
 
-		blg.save()
+		blоg.save()
+		print(blog)
+	
+	
+	load_form = BloggerAvatarLoadForm()
 
+	publ = Publication.objects.all().order_by("-time").filter(author=pk)		
 	blogger = Blogger.objects.get(id=pk)
-	publ = Publication.objects.all().order_by("-time").filter(author=pk)
-	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ, 'form':form})	
+	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ, 'form':form, 'load_form':load_form})	
 
 def new_publication(request):
 

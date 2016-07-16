@@ -3,8 +3,8 @@
 {% block content %}
     {% if user.is_authenticated %}
         <li class="sub-nav-main">
-            <ol><a href="{% url 'new' %}"><span class="glyphicon glyphicon-plus"></span></a></ol>
-            <ol><a href="{% url 'django.contrib.auth.views.logout' %}?next=/"><span class="glyphicon glyphicon-log-out"></span></a></ol>
+            <ol><a href="{% url 'new' %}" data-placement="bottom" data-toggle="tooltip" title="Новая статья"><span class="glyphicon glyphicon-plus"></span></a></ol>
+            <ol><a href="{% url 'django.contrib.auth.views.logout' %}?next=/" data-placement="bottom" data-toggle="tooltip" title="Выйти"><span class="glyphicon glyphicon-log-out"></span></a></ol>
         </li>
     {% endif %}
 

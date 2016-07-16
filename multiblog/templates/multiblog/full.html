@@ -3,8 +3,8 @@
 {% block content %}
 	{% if user.is_authenticated %}
         <li class="sub-nav-main">
-            <ol><a href="{% url 'new' %}"><span class="glyphicon glyphicon-plus"></span></a></ol>
-            <ol><a href="{% url 'django.contrib.auth.views.logout' %}?next=/"><span class="glyphicon glyphicon-log-out"></span></a></ol>
+            <ol><a href="{% url 'new' %}" data-placement="bottom" data-toggle="tooltip" title="Новая статья"><span class="glyphicon glyphicon-plus"></span></a></ol>
+            <ol><a href="{% url 'django.contrib.auth.views.logout' %}?next=/" data-placement="bottom" data-toggle="tooltip" title="Выйти"><span class="glyphicon glyphicon-log-out"></span></a></ol>
         </li>
     {% endif %}
 
@@ -25,7 +25,7 @@
             {% endautoescape %}
 			<hr class="featurette-divider">            
         	
-        	<h5 class="muted">{{ comments.count }} Комментариев</h5>        
+        	<h5 class="muted" value="{{ comments.count }}">{{ comments.count }} Комментариев</h5>        
                 {% if user.is_authenticated and user != post.author %}
                     <form action="/create_comment/" class="input-group input-group-lg" method="POST" id="comment-form">{% csrf_token %}
 					        <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>

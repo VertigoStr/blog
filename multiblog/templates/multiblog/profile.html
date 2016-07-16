@@ -2,6 +2,25 @@
 
 {% block content %}
 
+<div class="modal fade" id="new-avatar">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Загрузить новый аватар</div>
+            <div class="modal-body">                
+                <form name="form-upload" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    {{ load_form }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id='upload-new-avatar' name='upload'>Upload</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+
+
 <div class="modal fade" id="confirm-delete">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -12,11 +31,12 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-danger btn-ok" id="confirm">Delete</a>
+                <button type="submit" class="btn btn-danger btn-ok" id='confirm'>Delete</button>
             </div>
         </div>
     </div>
 </div>
+    
 
 
   <div id="modal" class="modal fade">
@@ -47,7 +67,7 @@
                         </div>
 
                         <div class="col-lg-6">
-            <form class="input-group input-group-lg" method="POST" id="comment-form">{% csrf_token %}
+            <form class="input-group input-group-lg" method="POST" id="comment-form" name="edit-profile-form">{% csrf_token %}
                             <div class="form-group">
                                 <div class="input-group col-md-11" id="input-name"> {{ form.name }} </div>
                             </div>
@@ -69,7 +89,7 @@
                 </div>
             
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" type="submit" id="submit-edit">Сохранить</button>
+                    <button type="button" class="btn btn-primary" type="submit" id="submit-edit" name="edit">Сохранить</button>
                 </div>
             </form>
 
@@ -79,8 +99,8 @@
 
     {% if user.is_authenticated %}
     <li class="sub-nav-main">
-        <ol><a href="{% url 'new' %}"><span class="glyphicon glyphicon-plus"></span></a></ol>
-        <ol><a href="{% url 'django.contrib.auth.views.logout' %}?next=/"><span class="glyphicon glyphicon-log-out"></span></a></ol>
+        <ol><a href="{% url 'new' %}" data-placement="bottom" data-toggle="tooltip" title="Новая статья"><span class="glyphicon glyphicon-plus"></span></a></ol>
+        <ol><a href="{% url 'django.contrib.auth.views.logout' %}?next=/" data-placement="bottom" data-toggle="tooltip" title="Выйти"><span class="glyphicon glyphicon-log-out"></span></a></ol>
     </li>
     {% endif %}
     <header class="main-header sub-content-wrapper">
@@ -93,6 +113,9 @@
 		<div class="row featurette">
 		    <div class="col-lg-4">
                 <img class="avatar" src="{{ blogger.avatar.url }}">
+                <div class="input-group col-md-11">
+                    <button class="del-msg btn btn-inverse btn-sm btn-block" id='upload-btn' data-toggle="modal" data-target="#new-avatar">Сменить аватар</button>
+                </div>
             </div>
 		
             <div class="col-lg-4">
@@ -128,7 +151,7 @@
             <ol><a href="#" class="sort-page" act="2-desc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по убыванию даты публикации" ><span class="glyphicon glyphicon-sort-by-order-alt"></span></a></ol>
             <ol><a href="#" class="sort-page" act="2-asc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по возрастанию даты публикации"><span class="glyphicon glyphicon-sort-by-order"></span></a></ol>
         </li>
-        
+        <div id="posts">
         {% for p in publ %}
             <article class="index-page" data-author="{{ p.author }}" data-time="{{ p.time }}" id="{{ p.id }}">
                 <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a>
@@ -148,10 +171,6 @@
                 <p>{{ p.abstract }}</p>
           </article>
         {% endfor %}
-
-        <div class="center-wrapper" id="navigation">
-        	<a href="left"><span class="glyphicon glyphicon-arrow-left"></span></a>
-            	<span>1</span>
-        	<a href="right"><span class="glyphicon glyphicon-arrow-right"></span></a>
         </div>
+        
 {% endblock content %}
