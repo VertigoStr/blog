@@ -21,10 +21,10 @@ class BloggerManager(BaseUserManager):
 
 class Blogger(AbstractBaseUser):
 	email = models.EmailField(verbose_name='Email', unique=True, max_length=250)
-	name = models.CharField(max_length=100, verbose_name='Имя', blank=False)
-	surname = models.CharField(max_length=100, verbose_name='Фамилия', blank=False)
-	phone = models.CharField(max_length=20, verbose_name='Телефон', blank=False)
-	skype = models.CharField(max_length=20, verbose_name='Skype', blank=False)
+	name = models.CharField(max_length=100, verbose_name='Имя', blank=True)
+	surname = models.CharField(max_length=100, verbose_name='Фамилия', blank=True)
+	phone = models.CharField(max_length=20, verbose_name='Телефон', blank=True)
+	skype = models.CharField(max_length=20, verbose_name='Skype', blank=True)
 	avatar = models.ImageField(upload_to=u'./media/img/', verbose_name='Аватар', blank=False, default='./media/img/ava-default.png')
 
 	is_active = models.BooleanField(default=True)

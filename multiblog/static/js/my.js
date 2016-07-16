@@ -58,7 +58,7 @@ $('document').ready(function(){
 		e.preventDefault();
 
     	var params = {'name': $('#name').val(), 'surname': $('#surname').val(), 'phone' : $('#phone').val(), 'skype' : $('#skype').val()}
-    	console.log(params);
+    	//console.log(params);
     	$.ajax({
 			url: window.location.pathname,
 			type: "POST",
@@ -115,7 +115,7 @@ $('document').ready(function(){
 
 			error: function(xhr, errmsg, err) {
 				//alert("Something went wrong!");
-				alert(xhr.status + ": " + xhr.responseText);
+				console.log(xhr.status + ": " + xhr.responseText);
 			}
 		});
     });

@@ -7,7 +7,7 @@ import datetime
 import json
 
 
-page_limit = 1 # ограничение на количество статей на странице
+page_limit = 2 # ограничение на количество статей на странице
 
 def pagination(response_data, paginator, page):
 
@@ -95,20 +95,14 @@ def my_profile(request, pk):
 		new_phone = request.POST.get('new_phone')
 		new_skype = request.POST.get('new_skype')
 
-		blоg = Blogger.objects.get(id=pk)
-		blоg.name = new_name if new_name else None
 
-		if new_surname:
-			blоg.surname = new_surname
+		blg = Blogger.objects.get(id=pk)
+		blg.name = new_name if new_name else ""
+		blg.surname = new_surname if new_surname else ""
+		blg.phone = new_phone if new_phone else ""
+		blg.skype = new_skype if new_skype else ""
 
-		if new_phone:
-			blоg.phone = new_phone
-
-		if new_skype:
-			blоg.skype = new_skype
-
-		blоg.save()
-		print(blog)
+		blg.save()
 	
 	
 	load_form = BloggerAvatarLoadForm()
