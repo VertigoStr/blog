@@ -4,34 +4,6 @@ $(document).ready(function(){
 
 
 $('#upload-btn').on('click', function(e) {
-    /*$('#upload-new-avatar').on('click', function(e) {
-		e.preventDefault();
-    	var data = new FormData($('form-upload').get(0));
-    	$.ajax({
-    		url: window.location.pathname,
-    		type: 'POST',
-    		data: data,
-    		cache: false,
-    		processData: false,
-    		contentType: false,
-    		beforeSend: function(xhr, settings) {
-    			var csrftoken = getCookie('csrftoken');
-        		if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            		xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        		}
-    		},
-    		success: function(json) {
-    			if (!json.error) {
-    				$('.avatar').attr('src', json.url)
-    				$('#new-avatar').modal('hide');
-    			} 
-    		},
-    		error: function(xhr, errmsg, err) {
-				//alert("Something went wrong!");
-				alert(xhr.status + ": " + xhr.responseText);
-			}
-		});
-    });*/
 });
 
 
@@ -79,43 +51,42 @@ $('document').ready(function(){
 			success: function(json){
 				if(!json.error) {
 					$('#modal').modal('hide');
-					var full_name = params['name'] + " " + params['surname'],
-						email = $('#get-names').attr('data-email');
+					var email = $('#get-names').attr('data-email'),
+						full_name = params['name'] + " " + params['surname'],
+						add_email = false;
 
-					$('#get-names').attr('data-name', params['name']);
-					$('#get-names').attr('data-surname', params['surname']);
-					$('#get-names').html((full_name.length != 1 ? full_name : email)
-							 + '<a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>'
-							 );
+					$('.contact-info').empty();
+					$('#title-params').empty();
 
-					$('.index-page').attr('data-author',
-						 full_name.length != 1 ? full_name : email);
-					$('.author-title').html(full_name.length == 1 ? email : full_name);
-
-
-					if (add_email) {
-						if (!$('#get-phone').attr('data-phone'))
-							$('.contact-info').prepend('<div class="col-lg-6"><h6>Телефон</h6></div><div class="col-lg-6" id="get-phone" data-phone="' + params['phone'] + '"><h6>' + params['phone'] + '</h6></div>');
-
-						if (!$('#get-email').attr('data-email') && full_name.length != 1)
-							$('.contact-info').prepend('<div class="col-lg-6"><h6>Email</h6></div><div class="col-lg-6" id="get-email" data-email="' + params['email'] + '"><h6>' + email + '</h6></div>');
-
-						if (!$('#get-skype').attr('data-skype'))
-							$('.contact-info').prepend('<div class="col-lg-6"><h6>Skype</h6></div><div class="col-lg-6" id="get-skype" data-skype="' + params['skype'] + '"><h6>' + params['skype'] + '</h6></div>');
+					if (params['phone']) {
+						$('.contact-info').prepend('<div class="col-lg-6"><h6>Телефон</h6></div><div class="col-lg-6" id="get-phone" data-phone="' + params['phone'] + '"><h6>' + params['phone'] + '</h6></div>');
 					}
 
-					$('#get-phone').attr('data-phone', params['phone']);
-					$('#get-phone').html('<h6>' + params['phone'] + '</h6>');
+					if (params['skype']) {
+						$('.contact-info').prepend('<div class="col-lg-6"><h6>Skype</h6></div><div class="col-lg-6" id="get-skype" data-skype="' + params['skype'] + '"><h6>' + params['skype'] + '</h6></div>');
+					}
 
-					$('#get-skype').attr('data-skype', params['skype']);
-					$('#get-skype').html('<h6>' + params['skype'] + '</h6>');
+					if (params['name'] || params['surname']) {
+						add_email = true;
+						$('.index-page').attr('data-author', full_name);
+						$('.author-title').html(full_name);
 
+						$('#title-params').prepend('<h3 class="featurette-heading" id="get-names" data-name="' 
+							+ params['name'] + '" data-surname="' + params['surname'] + '" data-email="' + email + '">' + full_name + '<a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a></h3>');
+					} else {
+						$('.index-page').attr('data-author', email);
+						$('.author-title').html(email);
+						$('#title-params').prepend('<h3 class="featurette-heading" id="get-names" data-email="' + email + '">' + email + '<a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a></h3>');
+					}
+					if (add_email){
+						$('.contact-info').prepend('<div class="col-lg-6"><h6>Email</h6></div><div class="col-lg-6" id="get-email" data-email="' + email + '"><h6>' + email + '</h6></div>');
+					}
 				}
 			},
 
 			error: function(xhr, errmsg, err) {
-				//alert("Something went wrong!");
-				console.log(xhr.status + ": " + xhr.responseText);
+				alert("Something went wrong!");
+				//console.log(xhr.status + ": " + xhr.responseText);
 			}
 		});
     });
@@ -127,7 +98,7 @@ $('.delete-object').on('click', function(e){
 	$('#file-to-delete').html('<strong>' + $(this).attr('data-title') + '</strong>');
 
 	$('#confirm').on('click', function(e){
-		console.log(post_id);		
+		//console.log(post_id);		
 		$.ajax({
 			url: window.location.pathname,
 			type: "GET",

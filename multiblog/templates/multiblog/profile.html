@@ -119,26 +119,34 @@
             </div>
 		
             <div class="col-lg-4">
-			    <div class="text-center">	
-			        <h3 class="featurette-heading" id="get-names" data-name="{{ blogger.name }}" data-surname="{{ blogger.surname }}" data-email="{{ blogger.email }}">{{ blogger }}
-                    {% if user.is_authenticated and user == blogger%}
-                        <a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>
-                    {% endif %}
-                    </h3>
+			    <div class="text-center" id="profile-info">	
+                    <div id="title-params">
+    			        <h3 class="featurette-heading" id="get-names" data-name="{{ blogger.name }}" data-surname="{{ blogger.surname }}" data-email="{{ blogger.email }}">{{ blogger }}
+                        {% if user.is_authenticated and user == blogger%}
+                            <a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>
+                        {% endif %}
+                        </h3>
+                    </div>
                     <div class="contact-info">
                     {% if blogger.phone %}
-	   		            <div class="col-lg-6"><h6>Телефон</h6></div>
-         	            <div class="col-lg-6" id="get-phone" data-phone="{{ blogger.phone }}"><h6>{{ blogger.phone }}</h6></div>
+                        <div id="phone-info">
+	   		              <div class="col-lg-6"><h6>Телефон</h6></div>
+         	              <div class="col-lg-6" id="get-phone" data-phone="{{ blogger.phone }}"><h6>{{ blogger.phone }}</h6></div>
+                        </div>
                     {% endif %}
 
-                    {% if blogger.email and blogger.name %}
-         	            <div class="col-lg-6"><h6>Email</h6></div>
-         	            <div class="col-lg-6" id="get-email"><h6>{{ blogger.email }}</h6></div>
+                    {% if blogger.email and blogger.name or blogger.email and blogger.surname %}
+                        <div id="email-info">
+         	              <div class="col-lg-6"><h6>Email</h6></div>
+         	              <div class="col-lg-6" id="get-email"><h6>{{ blogger.email }}</h6></div>
+                        </div>
                     {% endif %}
 
                     {% if blogger.skype %}
-         	            <div class="col-lg-6"><h6>Skype</h6></div>
-         	            <div class="col-lg-6" id="get-skype" data-skype="{{ blogger.skype }}"><h6>{{ blogger.skype }}</h6></div>
+                        <div id="skype-info">
+         	              <div class="col-lg-6"><h6>Skype</h6></div>
+         	              <div class="col-lg-6" id="get-skype" data-skype="{{ blogger.skype }}"><h6>{{ blogger.skype }}</h6></div>
+                        </div>
                     {% endif %}
                     </div>
          	    </div>

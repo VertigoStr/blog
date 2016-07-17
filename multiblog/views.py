@@ -87,7 +87,6 @@ def my_profile(request, pk):
 			ifile = request.FILES['avatar']
 			blg.avatar.save(ifile.name, ifile)
 			blg.save()
-			#return HttpResponse(json.dumps({'url' : blg.avatar.url}), content_type="application/json")
 
 	if request.POST.get('edit'):
 		new_name = request.POST.get('new_name')
@@ -123,7 +122,7 @@ def new_publication(request):
 			post.time = datetime.datetime.now()
 			post.author = auth.get_user(request)
 			post.save()
-			return HttpResponseRedirect('/')
+			return HttpResponseRedirect("/publication/" + str(post.id))
 	else:
 		form = PublicationForm()
 
