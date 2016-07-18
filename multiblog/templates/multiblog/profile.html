@@ -113,15 +113,17 @@
 		<div class="row featurette">
 		    <div class="col-lg-4">
                 <img class="avatar" src="{{ blogger.avatar.url }}">
+                {% if user.is_authenticated %}
                 <div class="input-group col-md-11">
                     <button class="del-msg btn btn-inverse btn-sm btn-block" id='upload-btn' data-toggle="modal" data-target="#new-avatar">Сменить аватар</button>
                 </div>
+                {% endif %}
             </div>
 		
             <div class="col-lg-4">
 			    <div class="text-center" id="profile-info">	
                     <div id="title-params">
-    			        <h3 class="featurette-heading" id="get-names" data-name="{{ blogger.name }}" data-surname="{{ blogger.surname }}" data-email="{{ blogger.email }}">{{ blogger }}
+    			        <h3 class="featurette-heading" id="get-names" data-name="{{ blogger.name }}" data-surname="{{ blogger.surname }}" data-email="{{ blogger.email }}" data-id="{{ blogger.id }}">{{ blogger }}
                         {% if user.is_authenticated and user == blogger%}
                             <a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a>
                         {% endif %}

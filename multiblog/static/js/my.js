@@ -13,7 +13,8 @@ $('document').ready(function(){
 	var name = $('#get-names').attr('data-name'), 
 		surname = $('#get-names').attr('data-surname'),
 		phone = $('#get-phone').attr('data-phone'),
-		skype = $('#get-skype').attr('data-skype');
+		skype = $('#get-skype').attr('data-skype'),
+		id = $('#get-names').attr('data-id');
 
 	var add_email = (name + surname).length == 0;
 	$('#input-name').html('<input class="form-control" type="text" id="name" value='+ name +'>');
@@ -32,7 +33,7 @@ $('document').ready(function(){
     	var params = {'name': $('#name').val(), 'surname': $('#surname').val(), 'phone' : $('#phone').val(), 'skype' : $('#skype').val()}
     	//console.log(params);
     	$.ajax({
-			url: window.location.pathname,
+			url: '/edit/' + id + '/',
 			type: "POST",
 			data : {
 					"edit" : "edit",
@@ -72,7 +73,7 @@ $('document').ready(function(){
 						$('.author-title').html(full_name);
 
 						$('#title-params').prepend('<h3 class="featurette-heading" id="get-names" data-name="' 
-							+ params['name'] + '" data-surname="' + params['surname'] + '" data-email="' + email + '">' + full_name + '<a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a></h3>');
+							+ params['name'] + '" data-surname="' + params['surname'] + '" data-email="' + email + '" data-id="' + id + '">' + full_name + '<a href="#modal" role="button" class="btn" data-toggle="modal" ><span class="glyphicon glyphicon-pencil"></span></a></h3>');
 					} else {
 						$('.index-page').attr('data-author', email);
 						$('.author-title').html(email);
@@ -85,8 +86,8 @@ $('document').ready(function(){
 			},
 
 			error: function(xhr, errmsg, err) {
-				alert("Something went wrong!");
-				//console.log(xhr.status + ": " + xhr.responseText);
+				//alert("Something went wrong!");
+				console.log(xhr.status + ": " + xhr.responseText);
 			}
 		});
     });
@@ -100,7 +101,7 @@ $('.delete-object').on('click', function(e){
 	$('#confirm').on('click', function(e){
 		//console.log(post_id);		
 		$.ajax({
-			url: window.location.pathname,
+			url: '/delete/',
 			type: "GET",
 			data : {"post_id":post_id},
 
@@ -112,8 +113,8 @@ $('.delete-object').on('click', function(e){
 			},
 
 			error: function(xhr, errmsg, err) {
-				alert("Something went wrong!");
-				// alert(xhr.status + ": " + xhr.responseText);
+				//alert("Something went wrong!");
+				alert(xhr.status + ": " + xhr.responseText);
 			}
 		});
 	});

@@ -1,93 +1,24 @@
-from django.shortcuts import render, HttpResponseRedirect, get_object_or_404, HttpResponse
-from .forms import PublicationForm, CommentsAddForm, BloggerEditForm, BloggerAvatarLoadForm
+from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.core.urlresolvers import reverse
+from .forms import PublicationForm, CommentsAddForm 
+from .forms import BloggerEditForm, BloggerAvatarLoadForm, BloggerAuthForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Blogger, BloggerManager, Publication, Comments
 from django.contrib import auth
+from django.views.generic import View
+from django.views.generic.edit import FormView, UpdateView
+
 import datetime
 import json
 
 
-page_limit = 2 # ограничение на количество статей на странице
-
-def pagination(response_data, paginator, page):
-
-	try:
-		pbl = paginator.page(page)
-	except PageNotAnInteger:
-		pbl = paginator.page(1)
-	except EmptyPage:
-		pbl = paginator.page(paginator.num_pages)
-
-	for p in pbl:
-		response_data.append({
-			'result' : 'success',
-			 'txt' : p.abstract, 
-			 'post_title': p.title, 
-			 'author' : p.author.get_full_name(),
-			 'author_id' : p.author.id,
-			 'post_id' : p.id,
-			 'when' : p.time.strftime('%d.%m.%Y %H:%M')
-		})
-	return response_data
-	
-
-def main(request):
-	publ = Publication.objects.all().order_by("-time")
-	paginator = Paginator(publ, page_limit)
-
-	if request.GET.get("page"):
-		response_data = []
-		response_data.append({"pages" : paginator.num_pages})
-		page = int(request.GET.get("page"))
-		response_data = pagination(response_data, paginator, page)
-		return HttpResponse(json.dumps(response_data), content_type="application/json")	
-
-
-	if request.GET.get('new'):
-		return HttpResponseRedirect("/new/")
-
-	if request.GET.get('logout'):
-		auth.logout(request)
-		return HttpResponseRedirect(request.path)
-
-	if request.method == "POST":
-		error = 'Неверный логин или пароль'
-		email = request.POST['email']
-		password = request.POST['password']
-
-		if 'submit-register' in request.POST:
-			try:
-				new_user = Blogger.objects.create_user(email, password)
-			except Exception:
-				error = 'Данный Email-адрес уже используется'
-				return render(request, 'multiblog/main.html', {'publ':publ, 'error': error})
-
-		new_user = auth.authenticate(email=email, password=password)
-
-		if new_user:
-			auth.login(request, new_user)	
-			return HttpResponseRedirect("/my_profile/" + str(auth.get_user(request).id))
-		else:
-			return render(request, 'multiblog/main.html', {'publ':publ, 'error': error})
-
-
-
-	return render(request, 'multiblog/main.html', {'publ':paginator.page(1)})
-
-def my_profile(request, pk):
-	form = BloggerEditForm()
+def delete(request):
 	if request.GET.get("post_id"):
 		post_id = request.GET.get("post_id")
 		Publication.objects.filter(id=post_id).delete()
+		return HttpResponse(request.path)
 
-	if request.POST:
-		load_form = BloggerAvatarLoadForm(request.POST, request.FILES)
-		if load_form.is_valid():
-			blg = Blogger.objects.get(id=pk)
-			ifile = request.FILES['avatar']
-			blg.avatar.save(ifile.name, ifile)
-			blg.save()
-
+def edit(request, pk):
 	if request.POST.get('edit'):
 		new_name = request.POST.get('new_name')
 		new_surname = request.POST.get('new_surname')
@@ -102,70 +33,183 @@ def my_profile(request, pk):
 		blg.skype = new_skype if new_skype else ""
 
 		blg.save()
-	
-	
-	load_form = BloggerAvatarLoadForm()
+	return HttpResponse(request.path)	
 
-	publ = Publication.objects.all().order_by("-time").filter(author=pk)		
-	blogger = Blogger.objects.get(id=pk)
-	return render(request, 'multiblog/profile.html', {'blogger': blogger, 'publ':publ, 'form':form, 'load_form':load_form})	
+class MainPageAuth(FormView):
+	form_class = BloggerAuthForm
+	template_name = 'multiblog/main.html'	
 
-def new_publication(request):
+	error = ''
+	page_limit = 2 # ограничение на количество статей на странице
+	user_id = -1
+	publ = Publication.objects.all().order_by("-time")
+	paginator = Paginator(publ, page_limit)
 
-	if request.method == "POST":
-		form = PublicationForm(request.POST)
-		if form.is_valid():
-			post = form.save(commit=False)
-			post.title =  form.cleaned_data['title']
-			post.abstract = form.cleaned_data['abstract']
-			post.full_text =  form.cleaned_data['full_text']
-			post.time = datetime.datetime.now()
-			post.author = auth.get_user(request)
-			post.save()
-			return HttpResponseRedirect("/publication/" + str(post.id))
-	else:
-		form = PublicationForm()
+	def pagination(self, paginator, page):
+		response_data = []
+		response_data.append({"pages" : paginator.num_pages})
+		try:
+			pbl = paginator.page(page)
+		except PageNotAnInteger:
+			pbl = paginator.page(1)
+		except EmptyPage:
+			pbl = paginator.page(paginator.num_pages)
 
-	return render(request, 'multiblog/new.html', {'form':form, 'mode':False})		
+		for p in pbl:
+			response_data.append({
+				'result' : 'success',
+			 	'txt' : p.abstract, 
+			 	'post_title': p.title, 
+			 	'author' : p.author.get_full_name(),
+			 	'author_id' : p.author.id,
+			 	'post_id' : p.id,
+			 	'when' : p.time.strftime('%d.%m.%Y %H:%M')
+			})
+		return response_data
 
-def edit_publication(request, pk):
-	post = get_object_or_404(Publication, pk=pk)
+	def context(self):
+		return {
+			'publ' : self.paginator.page(1),
+		    'form' : self.form_class,
+			'error' : self.error
+		}
 
-	if request.method == "POST":
-		form = PublicationForm(request.POST, instance=post)
-		if form.is_valid():
-			post = form.save(commit=False)
-			post.title =  form.cleaned_data['title']
-			post.abstract = form.cleaned_data['abstract']
-			post.full_text =  form.cleaned_data['full_text']
-			post.time = datetime.datetime.now()
-			post.author = auth.get_user(request)
-			post.save()
-			return HttpResponseRedirect("/publication/" + str(pk))
-	else:
-		form = PublicationForm(instance=post)
-	return render(request, 'multiblog/new.html', {'form':form, 'mode':True})
 
-def full_publication(request, pk):
-	form = CommentsAddForm()
-	post = get_object_or_404(Publication, pk=pk)
-	comments = Comments.objects.filter(publication=pk).order_by('-time')
-
-	if request.method == "POST":
-		comment_text = request.POST.get('comment')
-		response_data = {}
-		if comment_text:
-			comment = Comments(text=comment_text, author=auth.get_user(request), time=datetime.datetime.now(), publication=post)
-			comment.save()
-
-			response_data['result'] = 'success'
-			response_data['txt'] = comment.text
-			response_data['author'] = comment.author.get_full_name()
-			response_data['avatar'] = comment.author.avatar.url
-			response_data['author_id'] = comment.author.id
-			response_data['when'] = comment.time.strftime('%d.%m.%Y %H:%M')
-
+	def get(self, request):
+		if request.GET.get("page"):
+			page = int(request.GET.get("page"))
+			response_data = self.pagination(self.paginator, page)
 			return HttpResponse(json.dumps(response_data), content_type="application/json")
+		else:
+			return render(request, self.template_name, self.context())
+
+	def get_success_url(self):
+		return reverse("my_profile", kwargs={'pk': self.user_id})
+
+	def register(self, request):
+		email = request.POST['email']
+		password = request.POST['password']		
+
+		try:
+			user = Blogger.objects.create_user(email, password)
+			return self.auth(request)
+		except Exception:
+			self.error = 'Данный Email-адрес уже используется'
+			return render(request, self.template_name, self.context())
+
+	def auth(self, request):
+		email = request.POST['email']
+		password = request.POST['password']
+		user = auth.authenticate(email=email, password=password)
+
+		if user:
+			self.user_id = user.id
+			auth.login(self.request, user)
+			return super(MainPageAuth, self).form_valid(self.get_form())
+		else:
+			self.error = 'Неверный логин или пароль'
+			return render(request, self.template_name, self.context())
+
+	def post(self, request, *args, **kwargs):
+		form = self.get_form()
+
+		if 'submit-register' in request.POST:
+			return self.register(request)
+
+		if 'submit-log-in' in request.POST:
+			return self.auth(request)
+
+class MyProfile(FormView):
+	template_name = 'multiblog/profile.html'
+	form_class = BloggerAvatarLoadForm
+
+	def get_context_data(self, **kwargs):
+		pk = self.kwargs['pk']
+		return {
+			'publ' : Publication.objects.all().order_by("-time").filter(author=pk),
+			'blogger' : Blogger.objects.get(id=pk),
+			'form' : BloggerEditForm(),
+			'load_form' : self.form_class	
+		}
+
+	def get_success_url(self):
+		return reverse("my_profile", kwargs={'pk': self.request.user.id})
+
+	def form_valid(self, form):
+		blg = Blogger.objects.get(id=self.request.user.id)
+		ifile = self.request.FILES['avatar']
+		blg.avatar.save(ifile.name, ifile)
+		blg.save()
+		return super(MyProfile, self).form_valid(form)
+
+class NewPublication(FormView):
+	template_name = 'multiblog/new.html'
+	form_class = PublicationForm
+
+	publ_id = -1
+
+	def get_success_url(self):
+		return reverse("full", kwargs={'pk': self.publ_id})
+
+	def form_valid(self, form):
+		form.instance.time = datetime.datetime.now()
+		form.instance.author = self.request.user
+		form.save()
+		
+		self.publ_id = form.instance.id
+		return super(NewPublication, self).form_valid(form)
+
+class EditPublication(UpdateView):
+	template_name = 'multiblog/new.html'
+	model = Publication
+	form_class = PublicationForm
+
+	def get_context_data(self, **kwargs):
+		post = get_object_or_404(Publication, pk=self.kwargs['pk'])
+		form = PublicationForm(instance=post)
+		return {'form' : form, 'mode' : True}
+
+	def get_success_url(self):
+		return reverse("full", kwargs={'pk': self.kwargs['pk']})
 
 
-	return render(request, 'multiblog/full.html', {'post':post, 'comments':comments, 'form':form})
+	def form_valid(self, form):
+		form.instance.time = datetime.datetime.now()
+		form.instance.author = self.request.user
+		form.save()
+		return super(EditPublication, self).form_valid(form)
+
+class FullPublication(FormView):
+	template_name = 'multiblog/full.html'
+	form_class = CommentsAddForm
+
+	def get_context_data(self, **kwargs):
+		pk=self.kwargs['pk']
+		return {
+			'post' : get_object_or_404(Publication, pk=pk),
+			'comments' : Comments.objects.filter(publication=pk).order_by('-time'),
+			'form' : self.form_class,
+		}
+
+	def post(self, request, *args, **kwargs):
+		comment_text = request.POST.get('comment')
+
+		comment = Comments(
+			text=comment_text, 
+			author=auth.get_user(request), 
+			time=datetime.datetime.now(), 
+			publication=get_object_or_404(Publication, pk=kwargs['pk'])
+		)
+		comment.save()
+
+		response_data = {
+			'result' : 'success',
+			'txt' : comment_text,
+			'author' : comment.author.get_full_name(),
+			'avatar' : comment.author.avatar.url,
+			'author_id' : comment.author.id,
+			'when' : comment.time.strftime('%d.%m.%Y %H:%M')
+
+		}
+
+		return HttpResponse(json.dumps(response_data), content_type="application/json")		

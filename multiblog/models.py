@@ -87,7 +87,7 @@ class Publication(models.Model):
 	class Meta:
 		verbose_name = u'Публикация'
 		verbose_name_plural = u'Публикации'
-
+		
 class Comments(models.Model):
 	text = models.TextField(verbose_name='Текст')
 	time = models.DateTimeField(verbose_name='Дата публикации')
