@@ -1,0 +1,4 @@
+name		version
+django 		1.8
+bootstrap 	3.3.6-202
+jquery 		1.11.3

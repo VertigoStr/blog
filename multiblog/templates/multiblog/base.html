@@ -1,7 +1,33 @@
-{% load multiblog_tags %}
-{% header %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{% block content %}
-{% endblock %}
+    <title>Black-Blog</title>
+    {% load staticfiles %}
+    <link rel="icon" href="{% static 'img/favicon.ico' %}">
+    <link href="{% static 'css/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
-{% footer %}
+  </head>
+  <body>
+
+	{% block content %}
+	{% endblock %}
+
+	
+	<hr class="featurette-divider">
+        <footer>
+            <p>&copy; 2016 Red4Help.</p>
+        </footer>
+	</main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="static/js//jquery.min.js"><\/script>')</script>
+    <script src="{% static 'js/my.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/holder.min.js' %}"></script>
+    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+  </body>
+</html>

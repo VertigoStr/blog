@@ -113,7 +113,7 @@
 		<div class="row featurette">
 		    <div class="col-lg-4">
                 <img class="avatar" src="{{ blogger.avatar.url }}">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated  and user == blogger %}
                 <div class="input-group col-md-11">
                     <button class="del-msg btn btn-inverse btn-sm btn-block" id='upload-btn' data-toggle="modal" data-target="#new-avatar">Сменить аватар</button>
                 </div>
