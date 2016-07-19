@@ -88,4 +88,32 @@
       </div>
 
       <div class="center-wrapper" id="navigation" cat-id="-1"></div>
+
+  {{ django_context_varable }}
+  {% verbatim %}
+  <script type="text/x-handlebars-template" id="articles-template">
+    <article class="index-page" data-author="{{author}}" data-time="{{time}}">
+        <h4><a href="/publication/{{id}}/">{{title}}</a></h4>
+            <p class="post-meta"><time datetime='{{time}}'>{{time}}</time>&nbsp;/&nbsp;
+              <span item="author"><a href="/my_profile/{{author_id}}/">{{author}}</a></span>
+            </p>      
+          <p>{{abstract}}</p>
+    </article>
+  </script>
+  {% endverbatim %}
+
+  <script type="text/x-handlebars-template" id="sorters-template">
+    <ol><a href="#" class="sort-page" act="2-desc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по убыванию даты публикации" ><span class="glyphicon glyphicon-sort-by-order-alt"></span></a></ol>
+    <ol><a href="#" class="sort-page" act="2-asc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по возрастанию даты публикации"><span class="glyphicon glyphicon-sort-by-order"></span></a></ol>
+    <ol><a href="#" class="sort-page" act="1-desc" data-placement="bottom" data-toggle="tooltip" title="Сортировка в обратном алфавитном порядке"><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></ol>
+    <ol><a href="#" class="sort-page" act="1-asc" data-placement="bottom" data-toggle="tooltip" title="Сортировка в алфавитном порядке"><span class="glyphicon glyphicon-sort-by-alphabet"></span></a></ol>
+  </script>
+
+  <script type="text/x-handlebars-template" id="navigation-template">
+    <a id="left" href=""><span class="glyphicon glyphicon-arrow-left"></span></a>
+    <span id="page-number">1</span>
+    <a id="right" href=""><span class="glyphicon glyphicon-arrow-right"></span></a>
+  </script>
+
+
 {% endblock content %}

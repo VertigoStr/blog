@@ -19,28 +19,30 @@ $('article').click(function(e){
 			success: function(json){
 				if (!json.error) {
 					$('#posts').empty();
-					//var sourceHtml = $('#').html(); 
-					//var template = Handlebars.compile(sourceHtml);
-					//var element = template({author: json.author})
 
-					$('.sort-main').prepend('<ol><a href="#" class="sort-page" act="2-desc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по убыванию даты публикации" ><span class="glyphicon glyphicon-sort-by-order-alt"></span></a></ol>');
-					$('.sort-main').prepend('<ol><a href="#" class="sort-page" act="2-asc" data-placement="bottom" data-toggle="tooltip" title="Сортировка по возрастанию даты публикации"><span class="glyphicon glyphicon-sort-by-order"></span></a></ol>');
-					$('.sort-main').prepend('<ol><a href="#" class="sort-page" act="1-desc" data-placement="bottom" data-toggle="tooltip" title="Сортировка в обратном алфавитном порядке"><span class="glyphicon glyphicon-sort-by-alphabet-alt"></span></a></ol>');
-					$('.sort-main').prepend('<ol><a href="#" class="sort-page" act="1-asc" data-placement="bottom" data-toggle="tooltip" title="Сортировка в алфавитном порядке"><span class="glyphicon glyphicon-sort-by-alphabet"></span></a></ol>');
-					$('#navigation').prepend('<a id="left" href=""><span class="glyphicon glyphicon-arrow-left"></span></a><span id="page-number">1</span><a id="right" href=""><span class="glyphicon glyphicon-arrow-right"></span></a>');
-					$('#navigation').attr('cat-id', cat);
-					// $('body').append(element);
+					var source = $('#sorters-template').html();
+					var template = Handlebars.compile(source);
+					var element = template({});
+					$('.sort-main').append(element);
+
+					source = $('#navigation-template').html();
+					template = Handlebars.compile(source);
+					element = template({});
+					$('#navigation').append(element);
+					$('#navigation').attr('cat-id', cat)
+
+					source = $('#articles-template').html();
+					template = Handlebars.compile(source);
 					for (var i = 1; i < json.length; i++) {
-					$('#posts').prepend('<article class="index-page" data-author="' 
-						+ json[i].author + '" data-time="'
-						+ json[i].when + '"><h4><a href="/publication/'
-						+ json[i].post_id + '">' 
-						+ json[i].post_title + '</a></h4><p class="post-meta"><time datetime="' 
-						+ json[i].when + '">' 
-						+ json[i].when + '</time>&nbsp;/&nbsp;<span item="author"><a href="/my_profile/' 
-						+ json[i].author_id + '">' 
-						+ json[i].author + '</a></span></p><p>' 
-						+ json[i].txt + '</p></article>');
+						element = template({
+							title: json[i].post_title,
+							author: json[i].author,
+							author_id: json[i].author_id,
+							time: json[i].when,
+							abstract: json[i].txt,
+							id: json[i].post_id,
+						});
+						$('#posts').append(element)
 					}
 				}
 			}
@@ -95,17 +97,18 @@ $('#go_search').on('click', function(e){
 				if (!json.error) {
 					$('#posts').empty();
 					$('#navigation').empty();
+					source = $('#articles-template').html();
+					template = Handlebars.compile(source);
 					for (var i = 0 in json) {
-						$('#posts').prepend('<article class="index-page" data-author="' 
-							+ json[i].author + '" data-time="'
-							+ json[i].when + '"><h4><a href="/publication/'
-							+ json[i].post_id + '">' 
-							+ json[i].post_title + '</a></h4><p class="post-meta"><time datetime="' 
-							+ json[i].when + '">' 
-							+ json[i].when + '</time>&nbsp;/&nbsp;<span item="author"><a href="/my_profile/' 
-							+ json[i].author_id + '">' 
-							+ json[i].author + '</a></span></p><p>' 
-							+ json[i].txt + '</p></article>');
+						element = template({
+							title: json[i].post_title,
+							author: json[i].author,
+							author_id: json[i].author_id,
+							time: json[i].when,
+							abstract: json[i].txt,
+							id: json[i].post_id,
+						});
+						$('#posts').append(element)
 					}
 				}
 			}, 
@@ -249,10 +252,8 @@ var sort_page = function(f, st) {
 }
 
 $('body').on('click', '.sort-page', function(e){
-	alert($(this).attr('act'));
 	$('[data-toggle="tooltip"]').tooltip('hide');
 	var args = $(this).attr('act').split('-')
-	console.log(args);
 	sort_page(args[0], args[1]);
 });
 
@@ -332,17 +333,18 @@ function paginator(page) {
 			if (!json.error) {
 				$('#posts').empty();
 				console.log(json)
+				source = $('#articles-template').html();
+				template = Handlebars.compile(source);
 				for (var i = 1; i < json.length; i++) {
-					$('#posts').prepend('<article class="index-page" data-author="' 
-						+ json[i].author + '" data-time="'
-						+ json[i].when + '"><h4><a href="/publication/'
-						+ json[i].post_id + '">' 
-						+ json[i].post_title + '</a></h4><p class="post-meta"><time datetime="' 
-						+ json[i].when + '">' 
-						+ json[i].when + '</time>&nbsp;/&nbsp;<span item="author"><a href="/my_profile/' 
-						+ json[i].author_id + '">' 
-						+ json[i].author + '</a></span></p><p>' 
-						+ json[i].txt + '</p></article>');
+					element = template({
+							title: json[i].post_title,
+							author: json[i].author,
+							author_id: json[i].author_id,
+							time: json[i].when,
+							abstract: json[i].txt,
+							id: json[i].post_id,
+						});
+					$('#posts').append(element)
 				}
 				$('#page-number').html(page == json[0].pages + 1 ? page - 1: page);
 			}
