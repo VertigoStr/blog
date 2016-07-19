@@ -6,9 +6,39 @@ $(document).ready(function(){
 $('#upload-btn').on('click', function(e) {
 });
 
+$('.rating').click(function(e) {
+	var rating_value = $(this).attr('value');
+	if (rating_value) {
+		$.ajax({
+			url: '/rating/',
+			type: 'GET',
+			data: {'rating_value':rating_value},
+
+			success: function(json){
+				if (!json.error){
+					$('#rating').empty()
+					var i = 0;
+					while (i < 5) {
+						if (i < json.res) 
+							$('#rating').append('<span class="glyphicon glyphicon-star rating" value="' + (i + 1) + '"></span>')
+						else 
+							$('#rating').append('<span class="glyphicon glyphicon-star-empty rating" value="' + (i + 1) + '"></span>')
+						i++;
+					}
+				}
+			},
+
+			error: function(xhr, errmsg, err) {
+				console.log(xhr.status + ": " + xhr.responseText);
+			}
+
+		});
+	}
+});
+
 
 $('#go_search').on('click', function(e){
-	var input = $('#input-search').val()
+	var input = $('#input-search').val();
 	if (input) {
 		$.ajax( {
 			url: 'search',

@@ -25,7 +25,14 @@
             {% endautoescape %}
 			<hr class="featurette-divider">            
         	
-        	<h5 class="muted" value="{{ comments.count }}">{{ comments.count }} Комментариев</h5>        
+        	<h5 class="muted" value="{{ comments.count }}">{{ comments.count }} Комментариев</h5> 
+                <div id ="rating">
+                    <span class="glyphicon glyphicon-star-empty rating" value="1"></span>
+                    <span class="glyphicon glyphicon-star-empty rating" value="2"></span>
+                    <span class="glyphicon glyphicon-star-empty rating" value="3"></span>
+                    <span class="glyphicon glyphicon-star-empty rating" value="4"></span>
+                    <span class="glyphicon glyphicon-star-empty rating" value="5"></span>
+                </div>
                 {% if user.is_authenticated and user != post.author %}
                     <form action="/create_comment/" class="input-group input-group-lg" method="POST" id="comment-form">{% csrf_token %}
 					        <span class="input-group-addon"><span class="glyphicon glyphicon-pencil"></span></span>

@@ -80,6 +80,7 @@ class Publication(models.Model):
 	full_text = models.TextField(verbose_name='Полное описание')
 	time = models.DateTimeField(verbose_name='Дата публикации')
 	author = models.ForeignKey('Blogger', on_delete=models.CASCADE, verbose_name='Автор')
+	
 
 	def __str__(self):
 		return self.title

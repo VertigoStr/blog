@@ -11,6 +11,12 @@ from django.views.generic.edit import FormView, UpdateView
 import datetime
 import json
 
+def rating(request):
+	if request.GET.get('rating_value'):
+		rating_value = request.GET.get('rating_value')
+		print(rating_value)
+		res = rating_value
+		return HttpResponse(json.dumps({'res':res}), content_type="application/json")
 
 def search(request):
 	if request.GET.get("search_value"):
@@ -28,7 +34,7 @@ def search(request):
 			 	'post_id' : p.id,
 			 	'when' : p.time.strftime('%d.%m.%Y %H:%M')
 			})
-			
+
 		return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
