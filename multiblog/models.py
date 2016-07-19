@@ -10,7 +10,9 @@ class BloggerManager(BaseUserManager):
 
 		user = self.model(email = self.normalize_email(email), )
 		user.set_password(password)
+		user.is_active = False
 		user.save(using=self._db)
+
 		return user
 
 	def create_superuser(self, email, password):
@@ -27,7 +29,7 @@ class Blogger(AbstractBaseUser):
 	skype = models.CharField(max_length=20, verbose_name='Skype', blank=True)
 	avatar = models.ImageField(upload_to=u'./media/img/', verbose_name='Аватар', blank=False, default='./media/img/ava-default.png')
 
-	is_active = models.BooleanField(default=True)
+	is_active = models.BooleanField(default=False)
 	is_admin = models.BooleanField(default=False)
 
 	objects = BloggerManager()

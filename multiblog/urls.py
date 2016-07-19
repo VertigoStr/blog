@@ -12,4 +12,5 @@ urlpatterns = [
 	url(r'^edit/(?P<pk>[0-9]+)/$', views.edit, name='edit_profile'),
 	url(r'^search/$', views.search, name='search'),
 	url(r'^rating/$', views.rating, name='rating'),
+	url(r'^my_profile/(?P<pk>[0-9]+)/accept/$', views.accept, name='accept'),
 ]

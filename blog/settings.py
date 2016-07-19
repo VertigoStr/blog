@@ -29,6 +29,14 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_HOST_USER = 'testtest-14@bk.ru'
+EMAIL_HOST_PASSWORD = 'ntcnjdsqgfhjkm123'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+
 # Application definition
 AUTH_USER_MODEL = 'multiblog.Blogger'
 

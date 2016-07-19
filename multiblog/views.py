@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.shortcuts import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from .forms import PublicationForm, CommentsAddForm
 from .forms import BloggerEditForm, BloggerAvatarLoadForm, BloggerAuthForm
@@ -7,7 +8,10 @@ from .models import Blogger, BloggerManager, Publication, Comments, Categories
 from django.contrib import auth
 from django.views.generic import View
 from django.views.generic.edit import FormView, UpdateView
+from django.core.mail import send_mail
+from django.core import mail
 
+import smtplib
 import datetime
 import json
 
@@ -15,7 +19,6 @@ def rating(request):
 	if request.GET.get('rating_value'):
 		rating_value = int(request.GET.get('rating_value'))
 		post_id = int(request.GET.get('post_id'))
-		print(rating_value, post_id)
 		publ = Publication.objects.get(id=post_id)
 		publ.full_rating += rating_value
 		publ.count_of_users += 1
@@ -23,6 +26,13 @@ def rating(request):
 
 		res = int(publ.full_rating / publ.count_of_users)
 		return HttpResponse(json.dumps({'res':res}), content_type="application/json")
+
+def accept(request, pk):
+	blogger = Blogger.objects.get(id=pk)
+	blogger.is_active = True
+	blogger.save()
+	return HttpResponseRedirect("/my_profile/" + str(pk))
+
 
 def search(request):
 	if request.GET.get("search_value"):
@@ -105,10 +115,26 @@ class MainPageAuth(FormView):
 		}
 
 
+
+	def send_confirm(self, email, _id):
+		try:
+			send_mail(
+				'Подтверждение регистрации',
+				'Для того, чтобы воспользоваться всеми привелегиями пользователя, ' +
+				'подтвердите регистрацию, пройдя по ссылке: ' + 
+				'http://127.0.0.1:7000/my_profile/' + str(_id) + '/accept/',
+				'testtest-14@bk.ru',
+				[email],
+				fail_silently=False
+			)
+		except Exception as e:
+			print(e)
+
+
 	def get(self, request):
 		if request.GET.get('cat_id'):
 			cat_id = int(request.GET.get('cat_id'))
-			
+
 			publ = Publication.objects.filter(category=cat_id).order_by('-time')
 			paginator = Paginator(publ, self.page_limit)
 
@@ -137,6 +163,7 @@ class MainPageAuth(FormView):
 
 		try:
 			user = Blogger.objects.create_user(email, password)
+			self.send_confirm(user.email, user.id)
 			return self.auth(request)
 		except Exception:
 			self.error = 'Данный Email-адрес уже используется'
@@ -167,6 +194,7 @@ class MainPageAuth(FormView):
 class MyProfile(FormView):
 	template_name = 'multiblog/profile.html'
 	form_class = BloggerAvatarLoadForm
+
 
 	def get_context_data(self, **kwargs):
 		pk = self.kwargs['pk']
