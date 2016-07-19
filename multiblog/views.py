@@ -13,9 +13,15 @@ import json
 
 def rating(request):
 	if request.GET.get('rating_value'):
-		rating_value = request.GET.get('rating_value')
-		print(rating_value)
-		res = rating_value
+		rating_value = int(request.GET.get('rating_value'))
+		post_id = int(request.GET.get('post_id'))
+		print(rating_value, post_id)
+		publ = Publication.objects.get(id=post_id)
+		publ.full_rating += rating_value
+		publ.count_of_users += 1
+		publ.save()
+
+		res = int(publ.full_rating / publ.count_of_users)
 		return HttpResponse(json.dumps({'res':res}), content_type="application/json")
 
 def search(request):
@@ -211,10 +217,14 @@ class FullPublication(FormView):
 
 	def get_context_data(self, **kwargs):
 		pk=self.kwargs['pk']
+		post = get_object_or_404(Publication, pk=pk)
+		count = post.count_of_users if post.count_of_users > 0 else 1
+		res = int(post.full_rating / count)
 		return {
-			'post' : get_object_or_404(Publication, pk=pk),
+			'post' : post,
 			'comments' : Comments.objects.filter(publication=pk).order_by('-time'),
 			'form' : self.form_class,
+			'rating' : res,
 		}
 
 	def post(self, request, *args, **kwargs):

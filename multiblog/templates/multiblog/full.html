@@ -16,7 +16,7 @@
 
   	<main class="sub-content-wrapper">
 		<div class="row featurette">
-			<h2 class="text-left">{{ post.title }}</h2>
+			<h2 class="text-left" id="{{ post.id }}">{{ post.title }}</h2>
 			<p class="post-meta"><time datetime="{{ post.time }}">{{ post.time }}</time>&nbsp;/&nbsp;
 				<span item="author"><a href="{% url 'my_profile' pk=post.author.id %}">{{ post.author }}</a></span>
 			</p>
@@ -26,12 +26,18 @@
 			<hr class="featurette-divider">            
         	
         	<h5 class="muted" value="{{ comments.count }}">{{ comments.count }} Комментариев</h5> 
-                <div id ="rating">
-                    <span class="glyphicon glyphicon-star-empty rating" value="1"></span>
-                    <span class="glyphicon glyphicon-star-empty rating" value="2"></span>
-                    <span class="glyphicon glyphicon-star-empty rating" value="3"></span>
-                    <span class="glyphicon glyphicon-star-empty rating" value="4"></span>
-                    <span class="glyphicon glyphicon-star-empty rating" value="5"></span>
+                {% if user.is_authenticated and user != post.author %}
+                    <div id ="rating" data-enable="true">
+                {% else %}
+                    <div id ="rating" data-enable="false">
+                {% endif %}
+                    {% for i in 'xxxxx' %}
+                        {% if forloop.counter0 < rating %}
+                            <span class="glyphicon glyphicon-star rating" value="{{ forloop.counter }}"></span>
+                        {% else %}
+                            <span class="glyphicon glyphicon-star-empty rating" value="{{ forloop.counter }}"></span>
+                        {% endif %}
+                    {% endfor %}
                 </div>
                 {% if user.is_authenticated and user != post.author %}
                     <form action="/create_comment/" class="input-group input-group-lg" method="POST" id="comment-form">{% csrf_token %}

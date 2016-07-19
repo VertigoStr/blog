@@ -80,7 +80,8 @@ class Publication(models.Model):
 	full_text = models.TextField(verbose_name='Полное описание')
 	time = models.DateTimeField(verbose_name='Дата публикации')
 	author = models.ForeignKey('Blogger', on_delete=models.CASCADE, verbose_name='Автор')
-	
+	full_rating = models.IntegerField(verbose_name='Общая оценка', default=0)
+	count_of_users = models.IntegerField(verbose_name='Количество оценивших пользователей', default=0)
 
 	def __str__(self):
 		return self.title

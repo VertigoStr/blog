@@ -7,12 +7,17 @@ $('#upload-btn').on('click', function(e) {
 });
 
 $('.rating').click(function(e) {
-	var rating_value = $(this).attr('value');
-	if (rating_value) {
+	var rating_value = $(this).attr('value'),
+		post_id = $('h2').attr('id'),
+		is_enable = $.parseJSON($('#rating').attr('data-enable'));
+
+	console.log(is_enable)
+
+	if (rating_value && is_enable) {
 		$.ajax({
 			url: '/rating/',
 			type: 'GET',
-			data: {'rating_value':rating_value},
+			data: {'rating_value':rating_value, 'post_id' : post_id},
 
 			success: function(json){
 				if (!json.error){
