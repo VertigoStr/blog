@@ -135,7 +135,8 @@ class MainPageAuth(FormView):
 		if request.GET.get('cat_id'):
 			cat_id = int(request.GET.get('cat_id'))
 
-			publ = Publication.objects.filter(category=cat_id).order_by('-time')
+			publ = Publication.objects.filter(category=cat_id).filter(is_moderated=False)
+			publ.order_by('-time')
 			paginator = Paginator(publ, self.page_limit)
 
 			response_data = self.pagination(paginator, 1)
@@ -145,7 +146,9 @@ class MainPageAuth(FormView):
 			page = int(request.GET.get("page"))
 			cat_id = int(request.GET.get('cat-id'))
 
-			publ = Publication.objects.filter(category=cat_id).order_by('-time')
+			publ = Publication.objects.filter(category=cat_id).filter(is_moderated=False)
+			publ.order_by('-time')
+
 			paginator = Paginator(publ, self.page_limit)
 
 			response_data = self.pagination(paginator, page)			
@@ -221,15 +224,28 @@ class NewPublication(FormView):
 
 	publ_id = -1
 
+	def send_about_new(self, email, title):
+		try:
+			send_mail(
+				'Новая публикация',
+				'Появилась новая публикация под названием \"' + title + '\"!',
+				'testtest-14@bk.ru',
+				['testtest-14@bk.ru'],
+				fail_silently=False
+			)
+		except Exception as e:
+			print(e)
+
 	def get_success_url(self):
 		return reverse("full", kwargs={'pk': self.publ_id})
 
 	def form_valid(self, form):
-		print(form.instance.category)
+		#print(form.instance.category)
 		form.instance.time = datetime.datetime.now()
 		form.instance.author = self.request.user
+		form.instance.is_moderated = True
 		form.save()
-		
+		self.send_about_new(self.request.user.email, form.instance.title)
 		self.publ_id = form.instance.id
 		return super(NewPublication, self).form_valid(form)
 

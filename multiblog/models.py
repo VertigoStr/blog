@@ -85,6 +85,7 @@ class Publication(models.Model):
 	full_rating = models.IntegerField(verbose_name='Общая оценка', default=0)
 	count_of_users = models.IntegerField(verbose_name='Количество оценивших пользователей', default=0)
 	category = models.ForeignKey('Categories', on_delete=models.CASCADE, verbose_name='Категория', default=1)
+	is_moderated = models.BooleanField(default=False, verbose_name='На модерации')
 
 	def __str__(self):
 		return self.title
