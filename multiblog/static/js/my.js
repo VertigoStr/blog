@@ -7,6 +7,42 @@ $('#upload-btn').on('click', function(e) {
 });
 
 
+$('#go_search').on('click', function(e){
+	var input = $('#input-search').val()
+	if (input) {
+		$.ajax( {
+			url: 'search',
+			type: 'GET',
+			data: {'search_value':input},
+
+			success : function(json) {
+				if (!json.error) {
+					$('#posts').empty();
+					$('#navigation').empty();
+					for (var i = 0 in json) {
+						$('#posts').prepend('<article class="index-page" data-author="' 
+							+ json[i].author + '" data-time="'
+							+ json[i].when + '"><h4><a href="/publication/'
+							+ json[i].post_id + '">' 
+							+ json[i].post_title + '</a></h4><p class="post-meta"><time datetime="' 
+							+ json[i].when + '">' 
+							+ json[i].when + '</time>&nbsp;/&nbsp;<span item="author"><a href="/my_profile/' 
+							+ json[i].author_id + '">' 
+							+ json[i].author + '</a></span></p><p>' 
+							+ json[i].txt + '</p></article>');
+					}
+				}
+			}, 
+
+			error: function(xhr, errmsg, err) {
+					//alert("Something went wrong!");
+					console.log(xhr.status + ": " + xhr.responseText);
+				}
+		});
+	}
+});
+
+
 $('document').ready(function(){
     $('#modal').modal({show: false});
 

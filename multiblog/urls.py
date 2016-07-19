@@ -10,4 +10,5 @@ urlpatterns = [
 	url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 	url(r'^delete/$', views.delete, name='delete'),
 	url(r'^edit/(?P<pk>[0-9]+)/$', views.edit, name='edit_profile'),
+	url(r'^search/$', views.search, name='search')
 ]

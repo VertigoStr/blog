@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.core.urlresolvers import reverse
-from .forms import PublicationForm, CommentsAddForm 
+from .forms import PublicationForm, CommentsAddForm
 from .forms import BloggerEditForm, BloggerAvatarLoadForm, BloggerAuthForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Blogger, BloggerManager, Publication, Comments
@@ -10,6 +10,26 @@ from django.views.generic.edit import FormView, UpdateView
 
 import datetime
 import json
+
+
+def search(request):
+	if request.GET.get("search_value"):
+		search_value = request.GET.get("search_value")
+		val = Publication.objects.filter(title=search_value)
+
+		response_data = []
+		for p in val:
+			response_data.append({
+				'result' : 'success',
+			 	'txt' : p.abstract, 
+			 	'post_title': p.title, 
+			 	'author' : p.author.get_full_name(),
+			 	'author_id' : p.author.id,
+			 	'post_id' : p.id,
+			 	'when' : p.time.strftime('%d.%m.%Y %H:%M')
+			})
+			
+		return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
 def delete(request):

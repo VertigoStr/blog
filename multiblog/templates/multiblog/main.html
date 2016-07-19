@@ -4,6 +4,11 @@
     <div id="wrapper">
       <div id="sidebar-wrapper">
         <div class="col-sm-8 placeholder">
+            <div class = "input-group" id="search">
+                <input type="text" class="form-control" id="input-search" placeholder="Поиск"> 
+                <button class='btn col-md-12' id="go_search" type="submit">Поиск</button>
+            </div>
+            <h4></h4>
             {% if user.is_authenticated %}
                 <a href="{% url 'my_profile' pk=user.id %}"><img src="{{ user.avatar.url }}" class="img-responsive"></a>
                 <h4 class="text-center"><a href="{% url 'my_profile' pk=user.id %}">{{ user }}</a></h4>
