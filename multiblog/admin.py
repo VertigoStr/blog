@@ -4,7 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-from .models import Blogger, Publication, Comments
+from .models import Blogger, Publication, Comments, Categories
 
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -64,8 +64,8 @@ admin.site.unregister(Group)
 
 
 class PublicationAdmin(admin.ModelAdmin):
-    list_display = ('title', 'abstract', 'time', 'author',)
-    ordering = ('time', 'title', )
+    list_display = ('title', 'abstract', 'time', 'author', 'category', )
+    ordering = ('time', 'title', 'category', )
 
 admin.site.register(Publication, PublicationAdmin)
 
@@ -75,3 +75,9 @@ class CommentsAdmin(admin.ModelAdmin):
     ordering = ('time', 'author', )
 
 admin.site.register(Comments, CommentsAdmin)
+
+class CategoriesAdmin(admin.ModelAdmin):
+    list_display=('title', 'abstract', )
+    ordering = ('title', )
+
+admin.site.register(Categories, CategoriesAdmin)

@@ -175,7 +175,10 @@
                 </h4>
 
                 <p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
-                    <span item="author"><a href="{% url 'my_profile' pk=p.author.id %}" class="author-title">{{ p.author }}</a></span>
+                    <span item="author">
+                        <a href="{% url 'my_profile' pk=p.author.id %}" class="author-title">{{ p.author }}</a>
+                    </span>
+                    &nbsp;/&nbsp;{{ p.category.id }}
                 </p>
       
                 <p>{{ p.abstract }}</p>

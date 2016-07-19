@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import auth
-from .models import Blogger, Publication, Comments
+from .models import Blogger, Publication, Comments, Categories
 
 import datetime
 
@@ -26,11 +26,15 @@ class BloggerAuthForm(forms.ModelForm):
 		}
 
 class PublicationForm(forms.ModelForm):
-	
+	category = forms.ModelChoiceField(
+		queryset=Categories.objects.all(),
+		empty_label='Выберите категорию',
+		widget=forms.Select(attrs={'class':'form-control'}),
+	)
 
 	class Meta:
 		model = Publication
-		fields = ('title', 'abstract', 'full_text',)
+		fields = ('title', 'abstract', 'full_text', 'category',)
 		widgets = {
 			'title' : forms.TextInput(
 				attrs = {

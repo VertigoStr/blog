@@ -82,6 +82,7 @@ class Publication(models.Model):
 	author = models.ForeignKey('Blogger', on_delete=models.CASCADE, verbose_name='Автор')
 	full_rating = models.IntegerField(verbose_name='Общая оценка', default=0)
 	count_of_users = models.IntegerField(verbose_name='Количество оценивших пользователей', default=0)
+	category = models.ForeignKey('Categories', on_delete=models.CASCADE, verbose_name='Категория', default=1)
 
 	def __str__(self):
 		return self.title
@@ -89,6 +90,17 @@ class Publication(models.Model):
 	class Meta:
 		verbose_name = u'Публикация'
 		verbose_name_plural = u'Публикации'
+
+class Categories(models.Model):
+	title = models.CharField(max_length=200, verbose_name='Имя')
+	abstract = models.TextField(max_length=600, verbose_name='Краткое содержание')
+
+	def __str__(self):
+		return self.title
+
+	class Meta:
+		verbose_name = u'Категория'
+		verbose_name_plural = u'Категории'
 		
 class Comments(models.Model):
 	text = models.TextField(verbose_name='Текст')

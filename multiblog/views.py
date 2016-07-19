@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from .forms import PublicationForm, CommentsAddForm
 from .forms import BloggerEditForm, BloggerAvatarLoadForm, BloggerAuthForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Blogger, BloggerManager, Publication, Comments
+from .models import Blogger, BloggerManager, Publication, Comments, Categories
 from django.contrib import auth
 from django.views.generic import View
 from django.views.generic.edit import FormView, UpdateView
@@ -74,8 +74,6 @@ class MainPageAuth(FormView):
 	error = ''
 	page_limit = 2 # ограничение на количество статей на странице
 	user_id = -1
-	publ = Publication.objects.all().order_by("-time")
-	paginator = Paginator(publ, page_limit)
 
 	def pagination(self, paginator, page):
 		response_data = []
@@ -101,19 +99,34 @@ class MainPageAuth(FormView):
 
 	def context(self):
 		return {
-			'publ' : self.paginator.page(1),
+			'cats' : Categories.objects.all(),
 		    'form' : self.form_class,
-			'error' : self.error
+			'error' : self.error,
 		}
 
 
 	def get(self, request):
+		if request.GET.get('cat_id'):
+			cat_id = int(request.GET.get('cat_id'))
+			
+			publ = Publication.objects.filter(category=cat_id).order_by('-time')
+			paginator = Paginator(publ, self.page_limit)
+
+			response_data = self.pagination(paginator, 1)
+			return HttpResponse(json.dumps(response_data), content_type="application/json")
+
 		if request.GET.get("page"):
 			page = int(request.GET.get("page"))
-			response_data = self.pagination(self.paginator, page)
+			cat_id = int(request.GET.get('cat-id'))
+
+			publ = Publication.objects.filter(category=cat_id).order_by('-time')
+			paginator = Paginator(publ, self.page_limit)
+
+			response_data = self.pagination(paginator, page)			
 			return HttpResponse(json.dumps(response_data), content_type="application/json")
-		else:
-			return render(request, self.template_name, self.context())
+		
+
+		return render(request, self.template_name, self.context())
 
 	def get_success_url(self):
 		return reverse("my_profile", kwargs={'pk': self.user_id})
@@ -184,6 +197,7 @@ class NewPublication(FormView):
 		return reverse("full", kwargs={'pk': self.publ_id})
 
 	def form_valid(self, form):
+		print(form.instance.category)
 		form.instance.time = datetime.datetime.now()
 		form.instance.author = self.request.user
 		form.save()
