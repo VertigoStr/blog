@@ -1,5 +1,6 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from . import views
+import debug_toolbar
 
 urlpatterns = [
 	url(r'^$', views.MainPageAuth.as_view(), name='main'),
@@ -12,5 +13,6 @@ urlpatterns = [
 	url(r'^edit/(?P<pk>[0-9]+)/$', views.edit, name='edit_profile'),
 	url(r'^search/$', views.search, name='search'),
 	url(r'^rating/$', views.rating, name='rating'),
-	url(r'^my_profile/(?P<pk>[0-9]+)/accept/$', views.accept, name='accept'),
+	url(r'^my_profile/(?P<pk>[0-9]+)/accept/(?P<token>\w+)/$', views.accept, name='accept'),
+	url(r'^debug/', include(debug_toolbar.urls)),
 ]

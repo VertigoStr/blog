@@ -11,9 +11,17 @@ from django.views.generic.edit import FormView, UpdateView
 from django.core.mail import send_mail
 from django.core import mail
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+ 
+from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ParseError
+from rest_framework import status
+
 import smtplib
 import datetime
 import json
+import pytils
 
 def rating(request):
 	if request.GET.get('rating_value'):
@@ -27,11 +35,19 @@ def rating(request):
 		res = int(publ.full_rating / publ.count_of_users)
 		return HttpResponse(json.dumps({'res':res}), content_type="application/json")
 
-def accept(request, pk):
+def accept(request, pk, token):
 	blogger = Blogger.objects.get(id=pk)
-	blogger.is_active = True
-	blogger.save()
-	return HttpResponseRedirect("/my_profile/" + str(pk))
+	old = Token.objects.get(user=blogger)
+	print(token, old)
+	print(token == old)
+	if str(token) == str(old):
+		print(blogger)
+		blogger.is_active = True
+		blogger.save()
+		return HttpResponseRedirect("/my_profile/" + str(pk))
+
+	print('nope')
+	return HttpResponseRedirect("/")
 
 
 def search(request):
@@ -116,13 +132,13 @@ class MainPageAuth(FormView):
 
 
 
-	def send_confirm(self, email, _id):
+	def send_confirm(self, email, _id, token):
 		try:
 			send_mail(
 				'Подтверждение регистрации',
 				'Для того, чтобы воспользоваться всеми привелегиями пользователя, ' +
 				'подтвердите регистрацию, пройдя по ссылке: ' + 
-				'http://127.0.0.1:8000/my_profile/' + str(_id) + '/accept/',
+				'http://127.0.0.1:8000/my_profile/' + str(_id) + '/accept/' + token[0].key,
 				'testtest-14@bk.ru',
 				[email],
 				fail_silently=False
@@ -154,7 +170,7 @@ class MainPageAuth(FormView):
 			response_data = self.pagination(paginator, page)			
 			return HttpResponse(json.dumps(response_data), content_type="application/json")
 		
-
+		print(pytils.numeral.in_words(254))
 		return render(request, self.template_name, self.context())
 
 	def get_success_url(self):
@@ -166,7 +182,8 @@ class MainPageAuth(FormView):
 
 		try:
 			user = Blogger.objects.create_user(email, password)
-			self.send_confirm(user.email, user.id)
+			token = Token.objects.get_or_create(user=user)
+			self.send_confirm(user.email, user.id, token)
 			return self.auth(request)
 		except Exception:
 			self.error = 'Данный Email-адрес уже используется'
