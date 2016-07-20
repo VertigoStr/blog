@@ -164,7 +164,14 @@
         <div id="posts">
         {% for p in publ %}
             <article class="index-page" data-author="{{ p.author }}" data-time="{{ p.time }}" id="{{ p.id }}">
-                <h4><a href="{% url 'full' pk=p.id %}">{{ p.title }}</a>
+                <h4>
+                
+                {% if p.is_moderated %}
+                    {{ p.title }}
+                {% else %}
+                    <a href="{% url 'full' pk=p.id %}">{{ p.title }}</a>
+                {% endif %}
+                
                 {% if user.is_authenticated and user == p.author %}
                     <a href="{% url 'edit' pk=p.id %}"><span class="glyphicon glyphicon-pencil"></span></a>
                     <a href="#" role="button" data-toggle="modal" class="delete-object" data-target="#confirm-delete" 
@@ -172,13 +179,13 @@
                         <span class="glyphicon glyphicon-remove"></span>
                     </a>
                 {% endif %}
+                {% if p.is_moderated %}<p class="text-danger">На модерации</p>{% endif %}
                 </h4>
 
                 <p class="post-meta"><time datetime="{{ p.time }}">{{ p.time }}</time>&nbsp;/&nbsp;
                     <span item="author">
                         <a href="{% url 'my_profile' pk=p.author.id %}" class="author-title">{{ p.author }}</a>
-                    </span>
-                    &nbsp;/&nbsp;{{ p.category }}
+                    </span>&nbsp;/&nbsp;{{ p.category }}
                 </p>
       
                 <p>{{ p.abstract }}</p>

@@ -122,7 +122,7 @@ class MainPageAuth(FormView):
 				'Подтверждение регистрации',
 				'Для того, чтобы воспользоваться всеми привелегиями пользователя, ' +
 				'подтвердите регистрацию, пройдя по ссылке: ' + 
-				'http://127.0.0.1:7000/my_profile/' + str(_id) + '/accept/',
+				'http://127.0.0.1:8000/my_profile/' + str(_id) + '/accept/',
 				'testtest-14@bk.ru',
 				[email],
 				fail_silently=False
@@ -221,8 +221,7 @@ class MyProfile(FormView):
 class NewPublication(FormView):
 	template_name = 'multiblog/new.html'
 	form_class = PublicationForm
-
-	publ_id = -1
+	success_url = '/'
 
 	def send_about_new(self, email, title):
 		try:
@@ -236,11 +235,8 @@ class NewPublication(FormView):
 		except Exception as e:
 			print(e)
 
-	def get_success_url(self):
-		return reverse("full", kwargs={'pk': self.publ_id})
-
 	def form_valid(self, form):
-		#print(form.instance.category)
+		print('valid')
 		form.instance.time = datetime.datetime.now()
 		form.instance.author = self.request.user
 		form.instance.is_moderated = True

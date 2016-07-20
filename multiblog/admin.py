@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
+from django.db import models
 from .models import Blogger, Publication, Comments, Categories
 from django.core.mail import send_mail
 
@@ -65,25 +66,38 @@ admin.site.unregister(Group)
 
 
 class PublicationAdmin(admin.ModelAdmin):
-    list_display = ('title', 'abstract', 'time', 'author', 'category', )
+    list_display = ('title', 'abstract', 'time', 'author', 'category',)
     ordering = ('time', 'title', 'category', )
 
     def save_model(self, request, obj, form, change):
-        print(form.instance.title, form.instance.author)
         obj.save()
+        if 'why_not' in form.changed_data or 'is_moderated' in form.changed_data:
+            if form.instance.why_not and form.instance.is_moderated:
+                print('send cancel')
+                try:
+                    send_mail(
+                        'Публикация отклонена',
+                        'Ваша публикация \"' + form.instance.title + '\" отклонена!\nПричина:\n' +
+                        form.instance.why_not,
+                        'testtest-14@bk.ru',
+                        [form.instance.author.email],
+                        fail_silently=False
+                    )
+                except Exception as e:
+                    print(e)
 
-        if not form.instance.is_moderated:
-            print(form.instance.title, form.instance.author)
-            try:
-                send_mail(
-                    'Публикация одобрена',
-                    'Ваша публикация \"' + form.instance.title + '\" одобрена!',
-                    'testtest-14@bk.ru',
-                    [form.instance.author.email],
-                    fail_silently=False
-                )
-            except Exception as e:
-                print(e)
+            if not form.instance.is_moderated:
+                print('send accept')
+                try:
+                    send_mail(
+                        'Публикация одобрена',
+                        'Ваша публикация \"' + form.instance.title + '\" одобрена!',
+                        'testtest-14@bk.ru',
+                        [form.instance.author.email],
+                        fail_silently=False
+                    )
+                except Exception as e:
+                    print(e)
 
 admin.site.register(Publication, PublicationAdmin)
 

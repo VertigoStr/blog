@@ -6,7 +6,7 @@ $(document).ready(function(){
 $('#upload-btn').on('click', function(e) {
 });
 
-$('article').click(function(e){
+$('.index-cat').click(function(e){
 	e.preventDefault()
 	var cat = $(this).attr('id');
 
@@ -85,9 +85,13 @@ $('.rating').click(function(e) {
 });
 
 
-$('#go_search').on('click', function(e){
-	var input = $('#input-search').val();
+$('#search').on('submit', function(e){
+	e.preventDefault();
+	console.log('in');
+	var input = $("#go_search").val();
+	console.log(input);
 	if (input) {
+		console.log(input)
 		$.ajax( {
 			url: 'search',
 			type: 'GET',
@@ -95,6 +99,7 @@ $('#go_search').on('click', function(e){
 
 			success : function(json) {
 				if (!json.error) {
+					console.log(json);
 					$('#posts').empty();
 					$('#navigation').empty();
 					source = $('#articles-template').html();

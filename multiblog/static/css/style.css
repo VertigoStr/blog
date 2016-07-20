@@ -35,6 +35,11 @@
 .index-page {
     position: relative;
 }
+
+.index-cat {
+    position: relative;
+}
+
 article {
     padding: 2em 1em;
 }
